@@ -17,3 +17,9 @@
 ```
 
 ### 云函数配置
++ 触发配置
+> ![image](https://user-images.githubusercontent.com/49028484/132980589-59cd80dd-be5e-4535-92b0-38b4c35b2ca5.png)
++ 环境配置
+> ![image](https://user-images.githubusercontent.com/49028484/132981224-2b93c0b2-4be7-4745-a440-d58c61f96598.png)
+
+

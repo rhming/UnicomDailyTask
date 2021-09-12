@@ -142,8 +142,6 @@ class ThanksGiving(WoRead):
                     print(f"正在阅读<{item['cntname']}>-<{item['curChapterTitle']}>...")
                     self.reportLatestRead(item)
                     self.flushTime(12)
-            if int(time.strftime('%M', time.localtime(self.timestamp))) > 20:
-                return
             drawNum = self.index()
             if drawNum:
                 self.doDraw()

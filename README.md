@@ -15,7 +15,8 @@
     |-- appId.json  # 联通appId配置
     |-- config.py  # 数据存储服务接口配置
 ```
-
+### 云函数基本使用
++ 执行环境选择python3.6 上传[UnicomDailyTask.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask.zip)到云函数
 ### 云函数配置
 + 触发配置
 > ![image](https://user-images.githubusercontent.com/49028484/132980589-59cd80dd-be5e-4535-92b0-38b4c35b2ca5.png)

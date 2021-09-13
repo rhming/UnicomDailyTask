@@ -1,5 +1,12 @@
 {
-  "手机号": {
+  "手机号-1": {
+    "areaname": "区名",
+    "cityname": "城市名",
+    "contactaddr": "详细地址",
+    "contactor": "收货人姓名",
+    "provname": "省份名"
+  },
+  "手机号-2": {
     "areaname": "区名",
     "cityname": "城市名",
     "contactaddr": "详细地址",

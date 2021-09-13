@@ -15,6 +15,18 @@
     |-- appId.json  # 联通appId配置
     |-- config.py  # 数据存储服务接口配置
 ```
++ config.py文件
+> `data_storage_server_url` pythonanywhere搭建的接口(替换成自己搭建的域名)
+--- ---
+> ![image](https://user-images.githubusercontent.com/49028484/133171069-60857c48-8277-4b57-8972-847c5aec1cd5.png)
+--- ---
+> ![image](https://user-images.githubusercontent.com/49028484/133170462-293d2800-172c-47c5-b5c5-21d0f0c98c2c.png)
+--- ---
+> `username` `password` pythonanywhere Web中开启的安全保护授权用户密码(没开启可以留空)
+--- ---
+> ![image](https://user-images.githubusercontent.com/49028484/133170503-f8ec2681-e7db-4de7-9246-142a541397dd.png)
+
+
 ### 云函数基本使用
 + 执行环境选择python3.6 上传[UnicomDailyTask.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask.zip)到云函数
 ### 云函数配置

@@ -194,11 +194,13 @@ class UnicomClient(object):
         resp.encoding = 'utf8'
         result = resp.json()
         if result.get('token_online', False):
-            self.global_config['online'] = {
-                "token_online": result['token_online'],
-                "reqtime": str(self.timestamp)
+            self.global_config = {
+                'online': {
+                    "token_online": result['token_online'],
+                    "reqtime": str(self.timestamp)
+                },
+                'cookie': self.session.cookies.get_dict()
             }
-            self.global_config['cookie'] = self.session.cookies.get_dict()
             self.saveCookie(self.mobile + "WoGame", self.global_config)
         else:
             print(resp.text)
@@ -213,11 +215,13 @@ class UnicomClient(object):
         resp.encoding = 'utf8'
         result = resp.json()
         if result.get('token_online', False):
-            self.global_config['online'] = {
-                "token_online": result['token_online'],
-                "reqtime": str(self.timestamp)
+            self.global_config = {
+                'online': {
+                    "token_online": result['token_online'],
+                    "reqtime": str(self.timestamp)
+                },
+                'cookie': self.session.cookies.get_dict()
             }
-            self.global_config['cookie'] = self.session.cookies.get_dict()
             self.saveCookie(self.mobile + "WoGame", self.global_config)
         else:
             print(resp.text)

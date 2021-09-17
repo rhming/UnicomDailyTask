@@ -142,7 +142,7 @@ class UnicomClient(object):
                 }
             )
             result = resp.json()
-            result['extra'] = '...'
+            result['data'] = '...'
             print(result)
         except Exception as e:
             print('saveCookie', e)

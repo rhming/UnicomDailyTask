@@ -80,7 +80,7 @@ class Puzzle2(WoMail):
                 time.sleep(3)
             _, puzzle = self.userInfo()
             self.clear()
-            if puzzle == 6:
+            if puzzle >= 6:
                 self.draw()
                 self.prizeDetail()
         except Exception as e:

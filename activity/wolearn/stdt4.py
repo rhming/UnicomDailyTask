@@ -93,7 +93,11 @@ class Stdthd(WoLearn):
             # self.sal_answer_days = int(
             #     result['data']['answer'].get('sal_answer_days', 0)
             # )
-            self.srl_success_days = int(result['data']['round']['srl_success_days'])
+            # self.srl_success_days = int(result['data']['round']['srl_success_days'])
+            if not result['data']['round']:
+                self.srl_success_days = 0
+            else:
+                self.srl_success_days = int(result['data']['round']['srl_success_days'])
             self.sal_get_bonus = int(
                 result['data']['answer'].get('sal_get_bonus', 0)
             )

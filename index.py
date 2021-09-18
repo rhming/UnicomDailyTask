@@ -99,5 +99,5 @@ def main_handler(event=None, context=None):
         Template(SigninApp)
 
     # 消息推送
-    if now_time in range(1200, 1210) or now_time in range(1530, 1600):
+    if now_time in range(1100, 1110) or now_time in range(1500, 1510):
         PushTemplate()

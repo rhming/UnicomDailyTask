@@ -1,22 +1,15 @@
 # -*- coding: utf8 -*-
 # import json
-import time
 import execjs
 import requests
-from time import sleep
-from utils import jsonencode as json
-from utils.config import data_storage_server_url, Authorization, BASE_DIR
+from utils.common import Common
+from utils.config import BASE_DIR
 
 
-class WoRead(object):
-
-    def __getattribute__(self, name, *args, **kwargs):
-        obj = super().__getattribute__(name)
-        if type(obj).__name__ == 'method':
-            print(obj.__name__.center(64, '#'), self.mobile)
-        return obj
+class WoRead(Common):
 
     def __init__(self, mobile, _=None):
+        super(WoRead, self).__init__()
         self.mobile = mobile
         self.version = "android@8.0805"
         self.useragent = "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36; unicom{version:%s,desmobile:%s};devicetype{deviceBrand:Xiaomi,deviceModel:MI 8 SE};{yw_code:}" % (
@@ -36,91 +29,13 @@ class WoRead(object):
         if not self.popupListInfo():
             self.login()
 
-    @property
-    def timestamp(self):
-        return time.time() + 8 * 60 * 60
-
-    @property
-    def server_timestamp(self):
-        return int(time.time() * 1000)
-
-    @property
-    def now_date(self):
-        return time.strftime(
-            "%Y-%m-%d",
-            time.localtime(self.timestamp)
-        )
-
-    @property
-    def now_time(self):
-        return time.strftime(
-            "%X",
-            time.localtime(self.timestamp)
-        )
-
-    def flushTime(self, timeout):
-        for _ in range(timeout, -1, -1):
-            sleep(1)
-
     # def CookieDictToString(self):
     #     return '; '.join(['='.join([k, self.session.cookies.get_dict()[k]]) for k in self.session.cookies.get_dict()])
-    #
+
     def CookieStringToDict(self, cookie):
         return {
             item.split('=', 1)[0]: item.split('=', 1)[1] for item in cookie.split('; ') if item.strip()
         }
-
-    def readCookie(self, key, retry=5):
-        try:
-            resp = requests.get(
-                url=data_storage_server_url,
-                params={"key": key},
-                headers={
-                    "Authorization": Authorization,
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-                }
-            )
-            result = resp.json()
-            try:
-                if result["msg"]:
-                    data = result['data']
-                    return data[key]
-            except Exception as e:
-                print(e)
-            return ''
-        except Exception as e:
-            print(e)
-            if retry > 0:
-                self.flushTime(5)
-                self.readCookie(key, retry - 1)
-            else:
-                print("读取Cookie失败")
-
-    def saveCookie(self, key, value, retry=5):
-        try:
-            if type(value) in [dict, list, tuple]:
-                value = json.dumps(value, indent=4, ensure_ascii=False, max_depth=None)
-            resp = requests.post(
-                url=data_storage_server_url,
-                data={
-                    "key": key,
-                    "value": value
-                },
-                headers={
-                    "Authorization": Authorization,
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-                }
-            )
-            result = resp.json()
-            result['data'] = '...'
-            print(result)
-        except Exception as e:
-            print(e)
-            if retry > 0:
-                self.flushTime(5)
-                self.saveCookie(key, value, retry - 1)
-            else:
-                print("保存Cookie失败")
 
     def recordLog(self, log):
         record = self.readCookie(f'{self.mobile}WoReadRecord')

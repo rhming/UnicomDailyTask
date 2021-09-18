@@ -72,7 +72,7 @@ class FlowPackage(UnicomClient):
 
     def run(self):
         year, month, self.day = [
-            int(c) for c in time.strftime("%Y-%m-%d", time.localtime(self.timestamp / 1000)).split('-')
+            int(c) for c in self.now_date.split('-')
         ]
         if self.day == 1 or self.day == calendar.monthrange(year, month)[1]:
             print('月初、月末不支持兑换')

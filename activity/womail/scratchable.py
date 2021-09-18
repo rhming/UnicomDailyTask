@@ -1,5 +1,4 @@
 # -*- coding: utf8 -*-
-import time
 import json
 from activity.womail.womail import WoMail
 
@@ -39,7 +38,7 @@ class Scratchable(WoMail):
     def surplusTimes(self):
         url = 'https://club.mail.wo.cn/ActivityWeb/activity-detail/surplus-times'
         data = {
-            "participateDate": time.strftime("%Y-%m-%d", time.localtime(self.timestamp / 1000)),
+            "participateDate": self.now_date,
             "activityId": "387"
         }
         resp = self.session.post(url=url, json=data)
@@ -69,15 +68,18 @@ class Scratchable(WoMail):
     def getPrizeIndex(self):
         url = 'https://club.mail.wo.cn/ActivityWeb/activity-function/get-prize-index'
         data = {
-            "participateDate": time.strftime("%Y-%m-%d", time.localtime(self.timestamp / 1000)),
+            "participateDate": self.now_date,
             "activityId": "387"
         }
         resp = self.session.post(url=url, json=data)
         try:
-            print(resp.json())
+            result = resp.json()
+            print(result)
+            log = f"浅秋_{self.now_time}_{result['description']}"
+            self.recordLog(log)
         except:
             print(resp.text)
-        data = resp.json()['data']
+        data = result['data']
         if data['prizeType'] == 'THANKS_PARTICIPATE':
             return
         self.sendPrize(data['prizeId'], data['recordNo'], data['prizeType'])

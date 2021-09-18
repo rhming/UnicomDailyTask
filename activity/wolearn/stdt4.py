@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 # import json
-import random
+from random import randint
 from utils import jsonencode as json
 from activity.wolearn.wolearn import WoLearn
 
@@ -93,7 +93,6 @@ class Stdthd(WoLearn):
             # self.sal_answer_days = int(
             #     result['data']['answer'].get('sal_answer_days', 0)
             # )
-            # self.srl_success_days = int(result['data']['round']['srl_success_days'])
             if not result['data']['round']:
                 self.srl_success_days = 0
             else:
@@ -223,7 +222,7 @@ class Stdthd(WoLearn):
             for answerId in range(length):
                 if not self.sal_answer_status:
                     if self.sal_id and self.sal_answer_chances <= self.sal_wrong_num:
-                        self.flushTime(random.randint(25, 30))
+                        self.flushTime(randint(25, 30))
                         options = {
                             'arguments1': '',
                             'arguments2': '',
@@ -239,7 +238,7 @@ class Stdthd(WoLearn):
                         self.userActInfo()
                         continue
                     if self.sal_id and self.srl_success_days >= 3:
-                        self.flushTime(random.randint(25, 30))
+                        self.flushTime(randint(25, 30))
                         options = {
                             'arguments1': '',
                             'arguments2': '',

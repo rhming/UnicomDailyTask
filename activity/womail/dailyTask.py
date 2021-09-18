@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 import json
-import time
 from activity.womail.womail import WoMail
 
 
@@ -14,6 +13,7 @@ class DailySign(WoMail):
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2797 MMWEBSDK/20210501 Mobile Safari/537.36 MMWEBID/107 MicroMessenger/8.0.6.1900(0x28000635) Process/toolsmp WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64',
             'X-Requested-With': 'com.tencent.mm'  # XMLHttpRequest
         })
+        self.message = ''
 
     def login(self):
         url = f'https://nyan.mail.wo.cn/cn/sign/index/index?mobile={self.mobile}&userName=&openId={self.openId}'
@@ -84,18 +84,28 @@ class DailySign(WoMail):
                 if task_name in result:
                     continue
                 self.doTask(task_name)
-                time.sleep(1)
+                self.flushTime(1)
             else:
                 print("积分签到任务已完成")
             lastDay, keepSign = self.userInfo()
             if keepSign == '21':
                 print('跳过21天之后的打卡')
+                self.message = '每日签到: 跳过21天之后的打卡'
+                self.recordLog(self.message)
                 return
-            if time.strftime('%Y%m%d', time.localtime(self.timestamp / 1000)) == lastDay:
-                print("今日已打卡")
             else:
-                self.check()
-                self.prizeDetail()
+                if self.now_date.replace('-', '') == lastDay:
+                    print("今日已打卡")
+                    return
+                else:
+                    self.check()
+                    self.prizeDetail()
+                lastDay, _ = self.userInfo()
+                if self.now_date.replace('-', '') == lastDay:
+                    self.message = '每日签到: 已签到'
+                else:
+                    self.message = '每日签到: 未签到'
+                self.recordLog(self.message)
         except Exception as e:
             print(e)
 

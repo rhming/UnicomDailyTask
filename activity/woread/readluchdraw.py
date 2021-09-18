@@ -75,8 +75,8 @@ class ReadLuchDraw(WoRead):
             if not self.isdrawtoday:
                 self.addDrawTimes()
             for acticeindex in [
-                "QjUxRUZCMURBRUUyMzM2NTgwNUY2NzZGRTgxRUZGQUQ=",  # //一次 看视频20日流量
                 "NzFGQzM2Mjc4RDVGNUM4RTIyMzk4MkQ3OUNEMkZFOUE=",  # //默认
+                "QjUxRUZCMURBRUUyMzM2NTgwNUY2NzZGRTgxRUZGQUQ=",  # //一次 看视频20日流量
                 "OTJGMDkwNjk0Mjc4MjU2MkQyQjIyMzRGRDRGQzk4MzA=",  # //额外
             ]:
                 print(f'{self.mobile}抽奖-{acticeindex}')

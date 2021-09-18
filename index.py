@@ -14,6 +14,7 @@ from activity.wolearn.stdt4 import Stdthd
 from activity.womail.dailyTask import DailySign
 from activity.womail.scratchable import Scratchable
 from activity.womail.puzzle2 import Puzzle2
+from activity.push.pushlog import PushLog
 
 
 def Template(cls):
@@ -48,6 +49,16 @@ def WXTemplate(cls):
         t.start()
     for t in ts:
         t.join()
+
+
+def PushTemplate():
+    # 消息推送 (读取数据存储服务记录的日志进行推送)
+    PushLog([
+        # "联通手机号-1",
+        # "联通手机号-2",
+        # "沃邮箱mobile-1",
+        # "沃邮箱mobile-2",
+    ]).run()
 
 
 def main_handler(event=None, context=None):
@@ -86,3 +97,7 @@ def main_handler(event=None, context=None):
     # 联通每日签到
     if now_time in range(800, 810) or now_time in range(1100, 1110) or now_time in range(1500, 1510):
         Template(SigninApp)
+
+    # 消息推送
+    if now_time in range(1200, 1210) or now_time in range(1530, 1600):
+        PushTemplate()

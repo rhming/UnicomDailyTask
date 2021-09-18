@@ -1,14 +1,15 @@
-import time
-import random
 import requests
 from uuid import uuid4
 from urllib.parse import quote
+from utils.common import Common
+from random import randint, random
 from utils.toutiao_sdk import cbc_encrypt, cbc_decrypt, create_key_iv, md5
 
 
-class TouTiao:
+class TouTiao(Common):
 
     def __init__(self, mobile):
+        super(TouTiao, self).__init__()
         self.mobile = mobile
         self.session = requests.Session()
         self.session.headers = requests.structures.CaseInsensitiveDict({
@@ -16,10 +17,6 @@ class TouTiao:
             "accept-encoding": "gzip",
             "user-agent": "okhttp/3.9.1",
         })
-
-    @property
-    def timestamp(self):
-        return time.time() + 8 * 60 * 60
 
     def reward(self, options):
         orderId = md5(str(self.timestamp) + self.mobile)
@@ -35,7 +32,7 @@ class TouTiao:
             options.get('channelName', '') or options.get('remark', ''),
             '4G'
         ]
-        duration = random.randint(28000, 30000) / 1000
+        duration = randint(28000, 30000) / 1000
         message = {
             "oversea_version_type": 0,
             "reward_name": f"android-{options['remark']}-激励视频",
@@ -52,8 +49,8 @@ class TouTiao:
                 "creative_id": None,
                 "convert_id": None,
                 "uid": None,
-                "ad_type": 1,
-                "pricing": 9,
+                "ad_type": None,
+                "pricing": None,
                 "ut": 12,
                 "version_code": "8.8.5",
                 "device_id": None,
@@ -70,24 +67,24 @@ class TouTiao:
                 "device_type": "MI 8 SE",
                 "os_version": "8.1.0",
                 "app_id": "5049584",
-                "template_id": 7000001,
+                "template_id": 0,
                 "template_rate": 0,
                 "promotion_type": 0,
                 "img_gen_type": 0,
                 "img_md5": "",
-                "source_type": 1,
-                "pack_time": self.timestamp,
+                "source_type": None,
+                "pack_time": round(self.timestamp / 1000 + random(), 6),
                 "cid": None,
                 "interaction_type": 3,
                 "src_type": "app",
                 "package_name": "com.sinovatech.unicom.ui",
                 "pos": 5,
-                "landing_type": 3,
+                "landing_type": None,
                 "is_sdk": True,
-                "is_dsp_ad": False,
+                "is_dsp_ad": None,
                 "imei": "",
                 "req_id": "",
-                "rit": options.get('codeId', ''),
+                "rit": int(options.get('codeId', 0)),
                 "vid": "",
                 "orit": 900000000,
                 "ad_price": "",
@@ -120,7 +117,7 @@ class TouTiao:
             },
             "media_extra": quote('|'.join(media_extra)),
             "video_duration": duration,
-            "play_start_ts": int(self.timestamp) - random.randint(30, 35),
+            "play_start_ts": int(self.timestamp / 1000) - randint(30, 35),
             "play_end_ts": 0,
             "duration": int(duration * 1000),
             "user_id": "5049584",
@@ -146,3 +143,7 @@ class TouTiao:
                 pass
         print(data)
         return orderId
+
+
+if __name__ == '__main__':
+    pass

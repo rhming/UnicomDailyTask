@@ -1,9 +1,7 @@
 # -*- coding: utf8 -*-
 # import json
-import time
-import random
+from random import randint
 from utils import jsonencode as json
-from utils.toutiao_sdk import getSign
 from utils.toutiao_reward import TouTiao
 from activity.wogame.wogame import WoGame
 
@@ -52,56 +50,6 @@ class GameIntegral(WoGame):
         resp.encoding = 'utf8'
         data = resp.json()
         print(json.dumps(data, indent=4, ensure_ascii=False))
-
-    def taskcallbackquery(self, acId, taskId):
-        url = 'https://m.client.10010.com/taskcallback/taskfilter/query'
-        data = {
-            "arguments1": acId,  # "AC20200728150217",
-            "arguments2": "GGPD",
-            "arguments3": taskId,  # "96945964804e42299634340cd2650451",
-            "arguments4": str(self.timestamp),
-            "arguments6": "",
-            "version": self.version,
-            "netWay": "4G",
-        }
-        data["sign"] = getSign(data)
-        resp = self.session.post(url=url, data=data, headers={
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'okhttp/4.4.0'
-        })
-        resp.encoding = 'utf8'
-        result = resp.json()
-        print(result)
-        if result['code'] == '0000':
-            return True
-        return False
-
-    def taskcallbackdotasks(self, acId, taskId, orderId, remark):
-        url = 'https://m.client.10010.com/taskcallback/taskfilter/dotasks'
-        data = {
-            "arguments1": acId,
-            "arguments2": "GGPD",
-            "arguments3": taskId,
-            "arguments4": str(self.timestamp),
-            "arguments6": "",
-            "arguments7": "",
-            "arguments8": "",
-            "arguments9": "",
-            "orderId": orderId,
-            "netWay": "4G",
-            "remark": remark,  # "游戏视频任务积分",
-            "version": self.version
-        }
-        data["sign"] = getSign(data)
-        # print(json.dumps(data, indent=4, ensure_ascii=False))
-        # return
-        resp = self.session.post(url=url, data=data, headers={
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'okhttp/4.4.0'
-        })
-        resp.encoding = 'utf8'
-        result = resp.json()
-        print(result)
 
     def getReward(self, item):
         url = 'https://m.client.10010.com/producGameTaskCenter'
@@ -156,7 +104,6 @@ class GameIntegral(WoGame):
         acId = "AC20200728150217"
         taskId = "96945964804e42299634340cd2650451"
         if self.taskcallbackquery(acId, taskId):
-            pass
             options = {
                 'arguments1': acId,
                 'arguments2': taskId,
@@ -164,20 +111,17 @@ class GameIntegral(WoGame):
                 'remark': '游戏频道看视频得积分',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }
-            self.flushTime(random.randint(30, 35))
+            self.flushTime(randint(30, 35))
             orderId = self.toutiao.reward(options)
             self.taskcallbackdotasks(acId, taskId, orderId, options['remark'])
-            self.flushTime(random.randint(5, 10))
+            self.flushTime(randint(5, 10))
         self.queryIntegral(item)
 
     def drawTask(self, item):
         pass
 
     def run(self):
-        now_date = time.strftime(
-            "%Y-%m-%d", time.localtime(self.timestamp / 1000)
-        )
-        if self.last_login_time.find(now_date) == -1:
+        if self.last_login_time.find(self.now_date) == -1:
             self.onLine()
         gameTaskList = self.queryTaskCenter()
         # return

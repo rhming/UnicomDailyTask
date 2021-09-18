@@ -1,19 +1,15 @@
 # -*- coding: utf8 -*-
-import time
 import random
 import requests
+from utils.common import Common
+from urllib.parse import unquote
 
 
-class WoMail(object):
-
-    def __getattribute__(self, name, *args, **kwargs):
-        obj = super().__getattribute__(name)
-        if type(obj).__name__ == 'method':
-            print(obj.__name__.center(64, '#'), self.mobile)
-        return obj
+class WoMail(Common):
 
     def __init__(self, mobile, openId):
-        self.mobile = mobile
+        super(WoMail, self).__init__()
+        self.mobile = unquote(mobile)
         self.openId = openId
         self.session = requests.Session()
         self.session.headers = requests.structures.CaseInsensitiveDict({
@@ -24,9 +20,18 @@ class WoMail(object):
         })
 
     @property
-    def timestamp(self):
-        return int((time.time() + 8 * 60 * 60) * 1000)
-
-    @property
     def randomNum(self):
         return random.random()
+
+    def recordLog(self, log):
+        record = self.readCookie(f'{self.mobile}WoMailRecord')
+        if not record:
+            record = {}
+        if not record.get(self.now_date, False):
+            if len(record) > 30:
+                k = list(record.keys())[0]
+                record.pop(k)
+            record[self.now_date] = [log]
+        else:
+            record[self.now_date].append(log)
+        self.saveCookie(f'{self.mobile}WoMailRecord', record)

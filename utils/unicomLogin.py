@@ -4,19 +4,15 @@ import json
 import execjs
 import requests
 from random import choices
-from utils.config import BASE_DIR, data_storage_server_url, Authorization
+from utils.common import Common
+from utils.config import BASE_DIR
+from utils.toutiao_sdk import getSign
 
 
-class UnicomClient(object):
-
-    def __getattribute__(self, name, *args, **kwargs):
-        obj = super().__getattribute__(name)
-        if type(obj).__name__ == 'method':
-            print(obj.__name__.center(64, '#'), self.mobile)
-        return obj
+class UnicomClient(Common):
 
     def __init__(self, mobile, password):
-
+        super(UnicomClient, self).__init__()
         self.mobile = mobile
         self.password = password
         self.version = "android@8.0805"
@@ -45,28 +41,6 @@ class UnicomClient(object):
             )
         )
 
-    @property
-    def timestamp(self):
-        return int((time.time() + 8 * 60 * 60) * 1000)
-
-    @property
-    def server_timestamp(self):
-        return int(time.time() * 1000)
-
-    @property
-    def getDeviceId(self):
-        value = '86' + ''.join(choices('0123456789', k=12))
-        sum_ = 0
-        parity = 15 % 2
-        for i, digit in enumerate([int(x) for x in value]):
-            if i % 2 == parity:
-                digit *= 2
-                if digit > 9:
-                    digit -= 9
-            sum_ += digit
-        value += str((10 - sum_ % 10) % 10)
-        return value
-
     def onLineConf(self, item):
         return {
             "reqtime": str(self.timestamp),
@@ -82,75 +56,12 @@ class UnicomClient(object):
             "token_online": item['token_online']
         }
 
-    def flushTime(self, timeout):
-        for _ in range(timeout, -1, -1):
-            time.sleep(1)
-
     def getAppId(self):
         with open(BASE_DIR + '/utils/appId.json', 'r', encoding='utf8') as fp:
             appIds = json.loads(fp.read())  # type: dict
         if not appIds.get(self.mobile, False):
             raise Exception('[UnicomClient]获取appId失败')
         return appIds.get(self.mobile)
-
-    def readCookie(self, key, retry=5):
-        """
-            可能出现网络波动 增加重试请求
-        """
-        try:
-            resp = requests.get(
-                url=data_storage_server_url,
-                params={"key": key},
-                headers={
-                    "Authorization": Authorization,
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-                }
-            )
-            result = resp.json()
-            if result["msg"]:
-                data = result["data"]
-                return data[key]
-            else:
-                return ''
-        except Exception as e:
-            print('readCookie', e)
-            if retry > 0:
-                self.flushTime(5)
-                return self.readCookie(key, retry - 1)
-            else:
-                print("读取Cookie失败")
-                return ''
-
-    def saveCookie(self, key: str, value, retry=5):
-        """
-            可能出现网络波动 增加重试请求
-        """
-        try:
-            if type(value) in [dict, list, tuple]:
-                value = json.dumps(value, indent=4, ensure_ascii=False)
-            # if not isinstance(value, str):
-            #     value = str(value)
-            resp = requests.post(
-                url=data_storage_server_url,
-                data={
-                    "key": key,
-                    "value": value
-                },
-                headers={
-                    "Authorization": Authorization,
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-                }
-            )
-            result = resp.json()
-            result['data'] = '...'
-            print(result)
-        except Exception as e:
-            print('saveCookie', e)
-            if retry > 0:
-                self.flushTime(5)
-                return self.saveCookie(key, value, retry - 1)
-            else:
-                print("保存Cookie失败")
 
     def JSEncrypt(self, message):
         with open(BASE_DIR + '/utils/unicom.js', 'r', encoding='utf8') as fp:
@@ -225,6 +136,54 @@ class UnicomClient(object):
             self.saveCookie(self.mobile + "WoGame", self.global_config)
         else:
             print(resp.text)
+
+    def taskcallbackquery(self, acId, taskId):
+        url = 'https://m.client.10010.com/taskcallback/taskfilter/query'
+        data = {
+            "arguments1": acId,  # "AC20200728150217",
+            "arguments2": "GGPD",
+            "arguments3": taskId,  # "96945964804e42299634340cd2650451",
+            "arguments4": str(self.timestamp),
+            "arguments6": "",
+            "version": self.version,
+            "netWay": "4G",
+        }
+        data["sign"] = getSign(data)
+        resp = self.session.post(url=url, data=data, headers={
+            'content-type': 'application/x-www-form-urlencoded',
+            'user-agent': 'okhttp/4.4.0'
+        })
+        resp.encoding = 'utf8'
+        result = resp.json()
+        print(result)
+        if result['code'] == '0000' and not int(result.get('achieve')):
+            return True
+        return False
+
+    def taskcallbackdotasks(self, acId, taskId, orderId, remark):
+        url = 'https://m.client.10010.com/taskcallback/taskfilter/dotasks'
+        data = {
+            "arguments1": acId,
+            "arguments2": "GGPD",
+            "arguments3": taskId,
+            "arguments4": str(self.timestamp),
+            "arguments6": "",
+            "arguments7": "",
+            "arguments8": "",
+            "arguments9": "",
+            "orderId": orderId,
+            "netWay": "4G",
+            "remark": remark,  # "游戏视频任务积分",
+            "version": self.version
+        }
+        data["sign"] = getSign(data)
+        resp = self.session.post(url=url, data=data, headers={
+            'content-type': 'application/x-www-form-urlencoded',
+            'user-agent': 'okhttp/4.4.0'
+        })
+        resp.encoding = 'utf8'
+        result = resp.json()
+        print(result)
 
 
 if __name__ == '__main__':

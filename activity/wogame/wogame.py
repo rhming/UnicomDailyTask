@@ -1,8 +1,8 @@
 # -*- coding: utf8 -*-
 import json
 import time
-import random
 import requests
+from random import randint
 from utils import root_pb2
 from utils.qqmini_sdk import HmacSHA256
 from utils.unicomLogin import UnicomClient
@@ -14,7 +14,6 @@ class WoGame(UnicomClient):
 
     def __init__(self, mobile, password):
         super(WoGame, self).__init__(mobile, password)
-        self.mobile = mobile
         self.clientVersion = self.version.split("@")[1]
         self.session.headers = requests.structures.CaseInsensitiveDict({
             "Accept": "application/json, text/plain, */*",
@@ -89,7 +88,7 @@ class WoGame(UnicomClient):
                 self.flushTime(10)
                 self.qucikLogin(game_url, retry - 1)
             else:
-                raise Exception('[WoGame]登录失败, 结束执行该任务')
+                raise Exception('[WoGame]登录失败, 结束执行任务')
 
     def reportedGame(self, game_url, retry=3):
         """
@@ -119,14 +118,14 @@ class WoGame(UnicomClient):
     def judgeTime(self, resourceId, minute, n):
         date_string = time.strftime(
             '%m%d%H%M%S',
-            time.localtime(time.time() + 8 * 60 * 60)
+            time.localtime(self.timestamp / 1000)
         )
         t = self.timestamp % 1000
-        s = random.randint(0, 90000 - 1) + 10000
+        s = randint(0, 90000 - 1) + 10000
         traceid = f'{self.mobile}_{date_string}{t}_{s}'
         if not self.firsttime:
             self.firsttime = self.timestamp + 67056 * 1000
-        self.reporttime.append(random.randint(60, 65))  # 55
+        self.reporttime.append(randint(60, 65))  # 55
         info = {
             'Seq': 3 if n == 1 else 13 + n,
             'qua': 'V1_AND_MINISDK_1.5.4_0_RELEASE_B',
@@ -166,7 +165,7 @@ class WoGame(UnicomClient):
         JudgeTimingBusiBuff = json_format.ParseDict(info, JudgeTimingBusiBuff)
         data = JudgeTimingBusiBuff.SerializeToString()
         timestamp = self.timestamp // 1000
-        nonce = random.randint(-2 ** 31, 2 ** 31 - 1)
+        nonce = randint(-2 ** 31, 2 ** 31 - 1)
         request_url = f'POST /mini/OpenChannel?Action=input&Nonce={nonce}&PlatformID=2001&SignatureMethod=HmacSHA256&Timestamp={timestamp}'
         signature = HmacSHA256(request_url)
         url = f'https://q.qq.com/mini/OpenChannel?Action=input&Nonce={nonce}&PlatformID=2001&SignatureMethod=HmacSHA256&Timestamp={timestamp}&Signature={signature}'

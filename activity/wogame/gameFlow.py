@@ -55,10 +55,7 @@ class GameFlow(WoGame):
             self.flowGet(gameId, retry - 1)
 
     def run(self):
-        now_date = time.strftime(
-            "%Y-%m-%d", time.localtime(self.timestamp / 1000)
-        )
-        if self.last_login_time.find(now_date) == -1:
+        if self.last_login_time.find(self.now_date) == -1:
             self.onLine()
         popularList = self.popularGames()  # type: list
 

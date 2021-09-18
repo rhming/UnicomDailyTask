@@ -1,11 +1,10 @@
 # -*- coding: utf8 -*-
-import time
 # import json
 import requests
 from random import randint
-from utils.unicomLogin import UnicomClient
-from utils.toutiao_reward import TouTiao
 from utils import jsonencode as json
+from utils.toutiao_reward import TouTiao
+from utils.unicomLogin import UnicomClient
 
 
 class SigninApp(UnicomClient):
@@ -25,13 +24,18 @@ class SigninApp(UnicomClient):
         })
         self.hasDouble = False
         self.toutiao = TouTiao(mobile)
+        self.message = ''
 
     def listTaskInfo(self):
         url = 'https://act.10010.com/SigninApp/convert/listTaskInfo'
         resp = self.session.post(url=url)
         result = resp.json()
         print(json.dumps(result, indent=4, ensure_ascii=False))
-        return result['data']['paramsList']
+        paramsList = result['data']['paramsList']
+        self.message += "[气泡任务]\n"
+        for item in paramsList:
+            self.message += f'{item["prizeName"]}: {"已完成" if int(item["accomplish"]) else "未完成"}\n'
+        return paramsList
 
     def doTask(self, item, orderId):
         url = 'https://act.10010.com/SigninApp/task/doTask'
@@ -55,11 +59,17 @@ class SigninApp(UnicomClient):
         print(json.dumps(result, indent=4, ensure_ascii=False))
         data = result['data']  # ['daySignList']
         doubleBtn = data['doubleBtn']
+        self.message += '[签到任务]\n'
         if int(doubleBtn['click']) == 1:
             self.hasDouble = True
+            self.message += '红包翻倍: 未翻倍\n'
+        else:
+            self.message += '红包翻倍: 已翻倍\n'
         if int(data['todaySigned']) == 0:
             print("今日已签到")
+            self.message += '每日签到: 已签到\n'
             return True
+        self.message += '每日签到: 未签到\n'
 
     def getGoldTotal(self):
         url = 'https://act.10010.com/SigninApp/signin/getGoldTotal'
@@ -82,12 +92,18 @@ class SigninApp(UnicomClient):
         resp = self.session.post(url=url, data=data)
         print(json.dumps(resp.json(), indent=4, ensure_ascii=False))
 
+    def recordLog(self, log):
+        record = self.readCookie(f'{self.mobile}SigninAppRecord')
+        if not record:
+            record = {}
+        if len(record) > 30:
+            k = list(record.keys())[0]
+            record.pop(k)
+        record[self.now_date] = log
+        self.saveCookie(f'{self.mobile}SigninAppRecord', record)
+
     def run(self):
-        now_date = time.strftime(
-            "%Y-%m-%d",
-            time.localtime(self.timestamp / 1000)
-        )
-        if self.last_login_time.find(now_date) == -1:
+        if self.last_login_time.find(self.now_date) == -1:
             self.onLine()
         if not self.getContinuous():
             self.signIn()
@@ -95,7 +111,7 @@ class SigninApp(UnicomClient):
             # self.getIntegral()
             self.getContinuous()
         if self.hasDouble:
-            time.sleep(randint(10, 15))
+            self.flushTime(randint(10, 15))
             options = {
                 'arguments1': '',
                 'arguments2': '',
@@ -120,6 +136,11 @@ class SigninApp(UnicomClient):
             }
             orderId = self.toutiao.reward(options)
             self.doTask(item, orderId)
+        self.flushTime(randint(3, 5))
+        self.message = ''
+        self.getContinuous()
+        self.listTaskInfo()
+        self.recordLog(self.message)
 
 
 if __name__ == '__main__':

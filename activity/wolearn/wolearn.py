@@ -22,18 +22,6 @@ class WoLearn(UnicomClient):
         if not self.allconfig:
             self.allconfig = {}
 
-    @property
-    def now_date(self):
-        return time.strftime(
-            '%Y-%m-%d', time.localtime(self.timestamp / 1000)
-        )
-
-    @property
-    def now_time(self):
-        return time.strftime(
-            '%X', time.localtime(self.timestamp / 1000)
-        )
-
     def openPlatLineNew(self, to_url, retry=3):
         try:
             url = f'https://m.client.10010.com/mobileService/openPlatform/openPlatLineNew.htm?to_url={to_url}'

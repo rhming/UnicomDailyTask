@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 import json
-import time
 from activity.womail.womail import WoMail
 
 
@@ -33,10 +32,10 @@ class Puzzle2(WoMail):
         try:
             data = resp.json()
             print(json.dumps(data, indent=4, ensure_ascii=False))
-            return data['result']['usedChance'], data['result']['puzzle']
+            return int(data['result']['puzzle'])
         except:
             print(resp.text)
-            return 1, 0
+            return 0
 
     def prizeDetail(self):
         url = f'https://nyan.mail.wo.cn/cn/puzzle2/user/prizes.do?time={self.timestamp}'
@@ -65,20 +64,22 @@ class Puzzle2(WoMail):
     def draw(self):
         url = 'https://nyan.mail.wo.cn/cn/puzzle2/draw/draw'
         resp = self.session.get(url=url)
-        print(resp.json())
+        data = resp.json()
+        print(data)
+        log = f"碎片_{self.now_time}_{data['result']['prizeTitle']}"
+        self.recordLog(log)
 
     def run(self):
         try:
             self.login()
             self.index()
-            _, puzzle = self.userInfo()
             overTaskList = self.overTask()
             for taskName in ['checkin', 'loginmail', 'viewclub']:
                 if taskName in overTaskList:
                     continue
                 self.doTask(taskName)
-                time.sleep(3)
-            _, puzzle = self.userInfo()
+                self.flushTime(1)
+            puzzle = self.userInfo()
             self.clear()
             if puzzle >= 6:
                 self.draw()

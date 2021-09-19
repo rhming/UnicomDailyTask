@@ -53,6 +53,7 @@ def WXTemplate(cls):
 
 def PushTemplate():
     # 消息推送 (读取数据存储服务记录的日志进行推送)
+    # utils/config.py 推送配置
     # 填写参与活动任务的账号
     # 不需要推送 可以不填
     PushLog([

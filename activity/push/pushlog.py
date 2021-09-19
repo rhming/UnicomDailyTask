@@ -29,7 +29,8 @@ class PushLog(Common):
                     if not isinstance(msg, str):
                         msg = json.dumps(msg, indent=4, ensure_ascii=False)
                 self.message += msg + '\n'
-        getMessage(self.message).run()
+        if self.accounts:
+            getMessage(self.message).run()
 
 
 if __name__ == '__main__':

@@ -25,7 +25,7 @@ class PushLog(Common):
                 if not msg:
                     msg = "未获取到日志"
                 if isinstance(msg, dict):
-                    msg = msg.get(self.now_date, '')
+                    msg = msg.get(self.now_date, '未获取到日志')
                     if not isinstance(msg, str):
                         msg = json.dumps(msg, indent=4, ensure_ascii=False)
                 self.message += msg + '\n'

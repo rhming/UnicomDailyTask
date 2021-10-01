@@ -1,5 +1,5 @@
 # UnicomDailyTask
-联通日常任务 腾讯云函数定时执行(若需要积分任务,使用华为云函数工作流,阿里、腾讯云函数ip在联通积分接口黑名单上)
+联通日常任务 腾讯云函数定时执行(若需要积分任务,使用华为云函数工作流,阿里、腾讯云函数ip在联通积分获取接口上被限制)
 
 + 需搭建数据存储服务接口 [pythonanywhere仓库](https://github.com/rhming/pythonanywhere)
 + 沃阅读活动
@@ -29,7 +29,11 @@
 
 
 ### 云函数基本使用
-+ 执行环境选择python3.6 上传[UnicomDailyTask.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask.zip)到云函数
++ 腾讯云函数执行环境选择python3.6 上传[UnicomDailyTask.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask.zip)到云函数
+
++ 华为云函数工作流运行语言python3.6 
++ 上传[UnicomDailyTask_Dependency_Package.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask_Dependency_Package.zip)到创建依赖包
++ 上传[UnicomDailyTask_Code.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask_Code.zip)到函数工作流  
 ### 云函数配置
 + 触发配置
 > ![image](https://user-images.githubusercontent.com/49028484/132980589-59cd80dd-be5e-4535-92b0-38b4c35b2ca5.png)

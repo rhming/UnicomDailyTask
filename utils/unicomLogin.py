@@ -31,6 +31,7 @@ class UnicomClient(Common):
         if not self.global_config:
             self.login()
         else:
+            self.deviceId = self.global_config['cookie']['d_deviceCode']
             self.session.cookies.update(self.global_config['cookie'])
         if not (self.session.cookies.get('jwt', False) and self.session.cookies.get('ecs_token', False)):
             raise Exception('[UnicomClient]未登录状态')
@@ -156,6 +157,9 @@ class UnicomClient(Common):
         resp.encoding = 'utf8'
         result = resp.json()
         print(result)
+        # if result['code'] == '9996':
+        #     self.onLine()
+        #     return
         if result['code'] == '0000' and not int(result.get('achieve')):
             return True
         return False

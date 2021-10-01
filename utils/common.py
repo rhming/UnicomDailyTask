@@ -6,6 +6,7 @@ from utils.config import data_storage_server_url, Authorization
 
 
 class Common(object):
+    local_cookie_cache = {}
 
     def __getattribute__(self, name, *args, **kwargs):
         obj = super().__getattribute__(name)
@@ -18,7 +19,8 @@ class Common(object):
 
     @property
     def timestamp(self):
-        return int((time.time() + 8 * 60 * 60) * 1000)
+        return int(time.time() * 1000)
+        # return int((time.time() + 8 * 60 * 60) * 1000)
 
     @property
     def server_timestamp(self):
@@ -50,6 +52,10 @@ class Common(object):
         value += str((10 - sum_ % 10) % 10)
         return value
 
+    @property
+    def getMac(self):
+        return ':'.join([''.join(choices('0123456789ABCDE', k=2)) for _ in range(6)])
+
     def flushTime(self, timeout):
         for _ in range(timeout, -1, -1):
             time.sleep(1)
@@ -58,8 +64,11 @@ class Common(object):
         """
             可能出现网络波动 增加重试请求
         """
-        if not data_storage_server_url:
+        if data_storage_server_url.find('http') == -1:
             raise Exception('数据存储接口错误')
+        if Common.local_cookie_cache.get(key, ''):
+            # print('使用local_cookie_cache')
+            return Common.local_cookie_cache[key]
         try:
             resp = requests.get(
                 url=data_storage_server_url,
@@ -72,6 +81,7 @@ class Common(object):
             result = resp.json()
             if result["msg"]:
                 data = result["data"]
+                Common.local_cookie_cache[key] = data[key]
                 return data[key]
             else:
                 return ''
@@ -107,6 +117,8 @@ class Common(object):
                 }
             )
             result = resp.json()
+            # print('更新local_cookie_cache')
+            Common.local_cookie_cache[key] = result['data'][key]
             result['data'] = '...'
             print(result)
         except Exception as e:
@@ -116,3 +128,7 @@ class Common(object):
                 return self.saveCookie(key, value, retry - 1)
             else:
                 print("保存Cookie失败")
+
+
+if __name__ == '__main__':
+    pass

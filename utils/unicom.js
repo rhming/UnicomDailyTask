@@ -4,18 +4,22 @@ ASN1 = {};
 Hex = {};
 Base64S = {};
 
-var JSEncryptExports = {}; (function(exports) {
+var JSEncryptExports = {};
+(function (exports) {
     var dbits;
     var canary = 0xdeadbeefcafe;
     var j_lm = ((canary & 0xffffff) == 0xefcafe);
+
     function BigInteger(a, b, c) {
         if (a != null) if ("number" == typeof a) this.fromNumber(a, b, c);
         else if (b == null && "string" != typeof a) this.fromString(a, 256);
         else this.fromString(a, b);
     }
+
     function nbi() {
         return new BigInteger(null);
     }
+
     function am1(i, x, w, j, c, n) {
         while (--n >= 0) {
             var v = x * this[i++] + w[j] + c;
@@ -24,9 +28,10 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return c;
     }
+
     function am2(i, x, w, j, c, n) {
         var xl = x & 0x7fff,
-        xh = x >> 15;
+            xh = x >> 15;
         while (--n >= 0) {
             var l = this[i] & 0x7fff;
             var h = this[i++] >> 15;
@@ -37,9 +42,10 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return c;
     }
+
     function am3(i, x, w, j, c, n) {
         var xl = x & 0x3fff,
-        xh = x >> 14;
+            xh = x >> 14;
         while (--n >= 0) {
             var l = this[i] & 0x3fff;
             var h = this[i++] >> 14;
@@ -50,6 +56,7 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return c;
     }
+
     if (j_lm && (navigator.appName == "Microsoft Internet Explorer")) {
         BigInteger.prototype.am = am2;
         dbits = 30;
@@ -76,18 +83,22 @@ var JSEncryptExports = {}; (function(exports) {
     for (vv = 10; vv < 36; ++vv) BI_RC[rr++] = vv;
     rr = "A".charCodeAt(0);
     for (vv = 10; vv < 36; ++vv) BI_RC[rr++] = vv;
+
     function int2char(n) {
         return BI_RM.charAt(n);
     }
+
     function intAt(s, i) {
         var c = BI_RC[s.charCodeAt(i)];
         return (c == null) ? -1 : c;
     }
+
     function bnpCopyTo(r) {
         for (var i = this.t - 1; i >= 0; --i) r[i] = this[i];
         r.t = this.t;
         r.s = this.s;
     }
+
     function bnpFromInt(x) {
         this.t = 1;
         this.s = (x < 0) ? -1 : 0;
@@ -95,11 +106,13 @@ var JSEncryptExports = {}; (function(exports) {
         else if (x < -1) this[0] = x + this.DV;
         else this.t = 0;
     }
+
     function nbv(i) {
         var r = nbi();
         r.fromInt(i);
         return r;
     }
+
     function bnpFromString(s, b) {
         var k;
         if (b == 16) k = 4;
@@ -115,10 +128,10 @@ var JSEncryptExports = {}; (function(exports) {
         this.t = 0;
         this.s = 0;
         var i = s.length,
-        mi = false,
-        sh = 0;
+            mi = false,
+            sh = 0;
         while (--i >= 0) {
-            var x = (k == 8) ? s[i] & 0xff: intAt(s, i);
+            var x = (k == 8) ? s[i] & 0xff : intAt(s, i);
             if (x < 0) {
                 if (s.charAt(i) == "-") mi = true;
                 continue;
@@ -139,10 +152,12 @@ var JSEncryptExports = {}; (function(exports) {
         this.clamp();
         if (mi) BigInteger.ZERO.subTo(this, this);
     }
+
     function bnpClamp() {
         var c = this.s & this.DM;
-        while (this.t > 0 && this[this.t - 1] == c)--this.t;
+        while (this.t > 0 && this[this.t - 1] == c) --this.t;
     }
+
     function bnToString(b) {
         if (this.s < 0) return "-" + this.negate().toString(b);
         var k;
@@ -153,12 +168,12 @@ var JSEncryptExports = {}; (function(exports) {
         else if (b == 4) k = 2;
         else return this.toRadix(b);
         var km = (1 << k) - 1,
-        d,
-        m = false,
-        r = "",
-        i = this.t;
+            d,
+            m = false,
+            r = "",
+            i = this.t;
         var p = this.DB - (i * this.DB) % k;
-        if (i-->0) {
+        if (i-- > 0) {
             if (p < this.DB && (d = this[i] >> p) > 0) {
                 m = true;
                 r = int2char(d);
@@ -170,35 +185,40 @@ var JSEncryptExports = {}; (function(exports) {
                 } else {
                     d = (this[i] >> (p -= k)) & km;
                     if (p <= 0) {
-                        p += this.DB; --i;
+                        p += this.DB;
+                        --i;
                     }
                 }
                 if (d > 0) m = true;
                 if (m) r += int2char(d);
             }
         }
-        return m ? r: "0";
+        return m ? r : "0";
     }
+
     function bnNegate() {
         var r = nbi();
         BigInteger.ZERO.subTo(this, r);
         return r;
     }
+
     function bnAbs() {
         return (this.s < 0) ? this.negate() : this;
     }
+
     function bnCompareTo(a) {
         var r = this.s - a.s;
         if (r != 0) return r;
         var i = this.t;
         r = i - a.t;
-        if (r != 0) return (this.s < 0) ? -r: r;
+        if (r != 0) return (this.s < 0) ? -r : r;
         while (--i >= 0) if ((r = this[i] - a[i]) != 0) return r;
         return 0;
     }
+
     function nbits(x) {
         var r = 1,
-        t;
+            t;
         if ((t = x >>> 16) != 0) {
             x = t;
             r += 16;
@@ -221,10 +241,12 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return r;
     }
+
     function bnBitLength() {
         if (this.t <= 0) return 0;
         return this.DB * (this.t - 1) + nbits(this[this.t - 1] ^ (this.s & this.DM));
     }
+
     function bnpDLShiftTo(n, r) {
         var i;
         for (i = this.t - 1; i >= 0; --i) r[i + n] = this[i];
@@ -232,18 +254,20 @@ var JSEncryptExports = {}; (function(exports) {
         r.t = this.t + n;
         r.s = this.s;
     }
+
     function bnpDRShiftTo(n, r) {
         for (var i = n; i < this.t; ++i) r[i - n] = this[i];
         r.t = Math.max(this.t - n, 0);
         r.s = this.s;
     }
+
     function bnpLShiftTo(n, r) {
         var bs = n % this.DB;
         var cbs = this.DB - bs;
         var bm = (1 << cbs) - 1;
         var ds = Math.floor(n / this.DB),
-        c = (this.s << bs) & this.DM,
-        i;
+            c = (this.s << bs) & this.DM,
+            i;
         for (i = this.t - 1; i >= 0; --i) {
             r[i + ds + 1] = (this[i] >> cbs) | c;
             c = (this[i] & bm) << bs;
@@ -254,6 +278,7 @@ var JSEncryptExports = {}; (function(exports) {
         r.s = this.s;
         r.clamp();
     }
+
     function bnpRShiftTo(n, r) {
         r.s = this.s;
         var ds = Math.floor(n / this.DB);
@@ -273,10 +298,11 @@ var JSEncryptExports = {}; (function(exports) {
         r.t = this.t - ds;
         r.clamp();
     }
+
     function bnpSubTo(a, r) {
         var i = 0,
-        c = 0,
-        m = Math.min(a.t, this.t);
+            c = 0,
+            m = Math.min(a.t, this.t);
         while (i < m) {
             c += this[i] - a[i];
             r[i++] = c & this.DM;
@@ -305,9 +331,10 @@ var JSEncryptExports = {}; (function(exports) {
         r.t = i;
         r.clamp();
     }
+
     function bnpMultiplyTo(a, r) {
         var x = this.abs(),
-        y = a.abs();
+            y = a.abs();
         var i = x.t;
         r.t = i + y.t;
         while (--i >= 0) r[i] = 0;
@@ -316,6 +343,7 @@ var JSEncryptExports = {}; (function(exports) {
         r.clamp();
         if (this.s != a.s) BigInteger.ZERO.subTo(r, r);
     }
+
     function bnpSquareTo(r) {
         var x = this.abs();
         var i = r.t = 2 * x.t;
@@ -331,6 +359,7 @@ var JSEncryptExports = {}; (function(exports) {
         r.s = 0;
         r.clamp();
     }
+
     function bnpDivRemTo(m, q, r) {
         var pm = m.abs();
         if (pm.t <= 0) return;
@@ -342,8 +371,8 @@ var JSEncryptExports = {}; (function(exports) {
         }
         if (r == null) r = nbi();
         var y = nbi(),
-        ts = this.s,
-        ms = m.s;
+            ts = this.s,
+            ms = m.s;
         var nsh = this.DB - nbits(pm[pm.t - 1]);
         if (nsh > 0) {
             pm.lShiftTo(nsh, y);
@@ -355,13 +384,13 @@ var JSEncryptExports = {}; (function(exports) {
         var ys = y.t;
         var y0 = y[ys - 1];
         if (y0 == 0) return;
-        var yt = y0 * (1 << this.F1) + ((ys > 1) ? y[ys - 2] >> this.F2: 0);
+        var yt = y0 * (1 << this.F1) + ((ys > 1) ? y[ys - 2] >> this.F2 : 0);
         var d1 = this.FV / yt,
-        d2 = (1 << this.F1) / yt,
-        e = 1 << this.F2;
+            d2 = (1 << this.F1) / yt,
+            e = 1 << this.F2;
         var i = r.t,
-        j = i - ys,
-        t = (q == null) ? nbi() : q;
+            j = i - ys,
+            t = (q == null) ? nbi() : q;
         y.dlShiftTo(j, t);
         if (r.compareTo(t) >= 0) {
             r[r.t++] = 1;
@@ -371,7 +400,7 @@ var JSEncryptExports = {}; (function(exports) {
         t.subTo(y, y);
         while (y.t < ys) y[y.t++] = 0;
         while (--j >= 0) {
-            var qd = (r[--i] == y0) ? this.DM: Math.floor(r[i] * d1 + (r[i - 1] + e) * d2);
+            var qd = (r[--i] == y0) ? this.DM : Math.floor(r[i] * d1 + (r[i - 1] + e) * d2);
             if ((r[i] += y.am(0, qd, r, j, 0, ys)) < qd) {
                 y.dlShiftTo(j, t);
                 r.subTo(t, r);
@@ -387,38 +416,47 @@ var JSEncryptExports = {}; (function(exports) {
         if (nsh > 0) r.rShiftTo(nsh, r);
         if (ts < 0) BigInteger.ZERO.subTo(r, r);
     }
+
     function bnMod(a) {
         var r = nbi();
         this.abs().divRemTo(a, null, r);
         if (this.s < 0 && r.compareTo(BigInteger.ZERO) > 0) a.subTo(r, r);
         return r;
     }
+
     function Classic(m) {
         this.m = m;
     }
+
     function cConvert(x) {
         if (x.s < 0 || x.compareTo(this.m) >= 0) return x.mod(this.m);
         else return x;
     }
+
     function cRevert(x) {
         return x;
     }
+
     function cReduce(x) {
         x.divRemTo(this.m, null, x);
     }
+
     function cMulTo(x, y, r) {
         x.multiplyTo(y, r);
         this.reduce(r);
     }
+
     function cSqrTo(x, r) {
         x.squareTo(r);
         this.reduce(r);
     }
+
     Classic.prototype.convert = cConvert;
     Classic.prototype.revert = cRevert;
     Classic.prototype.reduce = cReduce;
     Classic.prototype.mulTo = cMulTo;
     Classic.prototype.sqrTo = cSqrTo;
+
     function bnpInvDigit() {
         if (this.t < 1) return 0;
         var x = this[0];
@@ -428,8 +466,9 @@ var JSEncryptExports = {}; (function(exports) {
         y = (y * (2 - (x & 0xff) * y)) & 0xff;
         y = (y * (2 - (((x & 0xffff) * y) & 0xffff))) & 0xffff;
         y = (y * (2 - x * y % this.DV)) % this.DV;
-        return (y > 0) ? this.DV - y: -y;
+        return (y > 0) ? this.DV - y : -y;
     }
+
     function Montgomery(m) {
         this.m = m;
         this.mp = m.invDigit();
@@ -438,6 +477,7 @@ var JSEncryptExports = {}; (function(exports) {
         this.um = (1 << (m.DB - 15)) - 1;
         this.mt2 = 2 * m.t;
     }
+
     function montConvert(x) {
         var r = nbi();
         x.abs().dlShiftTo(this.m.t, r);
@@ -445,12 +485,14 @@ var JSEncryptExports = {}; (function(exports) {
         if (x.s < 0 && r.compareTo(BigInteger.ZERO) > 0) this.m.subTo(r, r);
         return r;
     }
+
     function montRevert(x) {
         var r = nbi();
         x.copyTo(r);
         this.reduce(r);
         return r;
     }
+
     function montReduce(x) {
         while (x.t <= this.mt2) x[x.t++] = 0;
         for (var i = 0; i < this.m.t; ++i) {
@@ -467,28 +509,33 @@ var JSEncryptExports = {}; (function(exports) {
         x.drShiftTo(this.m.t, x);
         if (x.compareTo(this.m) >= 0) x.subTo(this.m, x);
     }
+
     function montSqrTo(x, r) {
         x.squareTo(r);
         this.reduce(r);
     }
+
     function montMulTo(x, y, r) {
         x.multiplyTo(y, r);
         this.reduce(r);
     }
+
     Montgomery.prototype.convert = montConvert;
     Montgomery.prototype.revert = montRevert;
     Montgomery.prototype.reduce = montReduce;
     Montgomery.prototype.mulTo = montMulTo;
     Montgomery.prototype.sqrTo = montSqrTo;
+
     function bnpIsEven() {
         return ((this.t > 0) ? (this[0] & 1) : this.s) == 0;
     }
+
     function bnpExp(e, z) {
         if (e > 0xffffffff || e < 1) return BigInteger.ONE;
         var r = nbi(),
-        r2 = nbi(),
-        g = z.convert(this),
-        i = nbits(e) - 1;
+            r2 = nbi(),
+            g = z.convert(this),
+            i = nbits(e) - 1;
         g.copyTo(r);
         while (--i >= 0) {
             z.sqrTo(r, r2);
@@ -501,12 +548,14 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return z.revert(r);
     }
+
     function bnModPowInt(e, m) {
         var z;
         if (e < 256 || m.isEven()) z = new Classic(m);
         else z = new Montgomery(m);
         return this.exp(e, z);
     }
+
     BigInteger.prototype.copyTo = bnpCopyTo;
     BigInteger.prototype.fromInt = bnpFromInt;
     BigInteger.prototype.fromString = bnpFromString;
@@ -531,42 +580,49 @@ var JSEncryptExports = {}; (function(exports) {
     BigInteger.prototype.modPowInt = bnModPowInt;
     BigInteger.ZERO = nbv(0);
     BigInteger.ONE = nbv(1);
+
     function bnClone() {
         var r = nbi();
         this.copyTo(r);
         return r;
     }
+
     function bnIntValue() {
         if (this.s < 0) {
             if (this.t == 1) return this[0] - this.DV;
-            else if (this.t == 0) return - 1;
+            else if (this.t == 0) return -1;
         } else if (this.t == 1) return this[0];
         else if (this.t == 0) return 0;
         return ((this[1] & ((1 << (32 - this.DB)) - 1)) << this.DB) | this[0];
     }
+
     function bnByteValue() {
-        return (this.t == 0) ? this.s: (this[0] << 24) >> 24;
+        return (this.t == 0) ? this.s : (this[0] << 24) >> 24;
     }
+
     function bnShortValue() {
-        return (this.t == 0) ? this.s: (this[0] << 16) >> 16;
+        return (this.t == 0) ? this.s : (this[0] << 16) >> 16;
     }
+
     function bnpChunkSize(r) {
         return Math.floor(Math.LN2 * this.DB / Math.log(r));
     }
+
     function bnSigNum() {
-        if (this.s < 0) return - 1;
+        if (this.s < 0) return -1;
         else if (this.t <= 0 || (this.t == 1 && this[0] <= 0)) return 0;
         else return 1;
     }
+
     function bnpToRadix(b) {
         if (b == null) b = 10;
         if (this.signum() == 0 || b < 2 || b > 36) return "0";
         var cs = this.chunkSize(b);
         var a = Math.pow(b, cs);
         var d = nbv(a),
-        y = nbi(),
-        z = nbi(),
-        r = "";
+            y = nbi(),
+            z = nbi(),
+            r = "";
         this.divRemTo(d, y, z);
         while (y.signum() > 0) {
             r = (a + z.intValue()).toString(b).substr(1) + r;
@@ -574,14 +630,15 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return z.intValue().toString(b) + r;
     }
+
     function bnpFromRadix(s, b) {
         this.fromInt(0);
         if (b == null) b = 10;
         var cs = this.chunkSize(b);
         var d = Math.pow(b, cs),
-        mi = false,
-        j = 0,
-        w = 0;
+            mi = false,
+            j = 0,
+            w = 0;
         for (var i = 0; i < s.length; ++i) {
             var x = intAt(s, i);
             if (x < 0) {
@@ -602,6 +659,7 @@ var JSEncryptExports = {}; (function(exports) {
         }
         if (mi) BigInteger.ZERO.subTo(this, this);
     }
+
     function bnpFromNumber(a, b, c) {
         if ("number" == typeof b) {
             if (a < 2) this.fromInt(1);
@@ -616,7 +674,7 @@ var JSEncryptExports = {}; (function(exports) {
             }
         } else {
             var x = new Array(),
-            t = a & 7;
+                t = a & 7;
             x.length = (a >> 3) + 1;
             b.nextBytes(x);
             if (t > 0) x[0] &= ((1 << t) - 1);
@@ -624,14 +682,15 @@ var JSEncryptExports = {}; (function(exports) {
             this.fromString(x, 256);
         }
     }
+
     function bnToByteArray() {
         var i = this.t,
-        r = new Array();
+            r = new Array();
         r[0] = this.s;
         var p = this.DB - (i * this.DB) % 8,
-        d,
-        k = 0;
-        if (i-->0) {
+            d,
+            k = 0;
+        if (i-- > 0) {
             if (p < this.DB && (d = this[i] >> p) != (this.s & this.DM) >> p) r[k++] = d | (this.s << (this.DB - p));
             while (i >= 0) {
                 if (p < 8) {
@@ -640,25 +699,30 @@ var JSEncryptExports = {}; (function(exports) {
                 } else {
                     d = (this[i] >> (p -= 8)) & 0xff;
                     if (p <= 0) {
-                        p += this.DB; --i;
+                        p += this.DB;
+                        --i;
                     }
                 }
                 if ((d & 0x80) != 0) d |= -256;
-                if (k == 0 && (this.s & 0x80) != (d & 0x80))++k;
+                if (k == 0 && (this.s & 0x80) != (d & 0x80)) ++k;
                 if (k > 0 || d != this.s) r[k++] = d;
             }
         }
         return r;
     }
+
     function bnEquals(a) {
         return (this.compareTo(a) == 0);
     }
+
     function bnMin(a) {
-        return (this.compareTo(a) < 0) ? this: a;
+        return (this.compareTo(a) < 0) ? this : a;
     }
+
     function bnMax(a) {
-        return (this.compareTo(a) > 0) ? this: a;
+        return (this.compareTo(a) > 0) ? this : a;
     }
+
     function bnpBitwiseTo(a, op, r) {
         var i, f, m = Math.min(a.t, this.t);
         for (i = 0; i < m; ++i) r[i] = op(this[i], a[i]);
@@ -674,38 +738,47 @@ var JSEncryptExports = {}; (function(exports) {
         r.s = op(this.s, a.s);
         r.clamp();
     }
+
     function op_and(x, y) {
         return x & y;
     }
+
     function bnAnd(a) {
         var r = nbi();
         this.bitwiseTo(a, op_and, r);
         return r;
     }
+
     function op_or(x, y) {
         return x | y;
     }
+
     function bnOr(a) {
         var r = nbi();
         this.bitwiseTo(a, op_or, r);
         return r;
     }
+
     function op_xor(x, y) {
         return x ^ y;
     }
+
     function bnXor(a) {
         var r = nbi();
         this.bitwiseTo(a, op_xor, r);
         return r;
     }
+
     function op_andnot(x, y) {
         return x & ~y;
     }
+
     function bnAndNot(a) {
         var r = nbi();
         this.bitwiseTo(a, op_andnot, r);
         return r;
     }
+
     function bnNot() {
         var r = nbi();
         for (var i = 0; i < this.t; ++i) r[i] = this.DM & ~this[i];
@@ -713,20 +786,23 @@ var JSEncryptExports = {}; (function(exports) {
         r.s = ~this.s;
         return r;
     }
+
     function bnShiftLeft(n) {
         var r = nbi();
-        if (n < 0) this.rShiftTo( - n, r);
+        if (n < 0) this.rShiftTo(-n, r);
         else this.lShiftTo(n, r);
         return r;
     }
+
     function bnShiftRight(n) {
         var r = nbi();
-        if (n < 0) this.lShiftTo( - n, r);
+        if (n < 0) this.lShiftTo(-n, r);
         else this.rShiftTo(n, r);
         return r;
     }
+
     function lbit(x) {
-        if (x == 0) return - 1;
+        if (x == 0) return -1;
         var r = 0;
         if ((x & 0xffff) == 0) {
             x >>= 16;
@@ -744,50 +820,60 @@ var JSEncryptExports = {}; (function(exports) {
             x >>= 2;
             r += 2;
         }
-        if ((x & 1) == 0)++r;
+        if ((x & 1) == 0) ++r;
         return r;
     }
+
     function bnGetLowestSetBit() {
         for (var i = 0; i < this.t; ++i) if (this[i] != 0) return i * this.DB + lbit(this[i]);
         if (this.s < 0) return this.t * this.DB;
-        return - 1;
+        return -1;
     }
+
     function cbit(x) {
         var r = 0;
         while (x != 0) {
-            x &= x - 1; ++r;
+            x &= x - 1;
+            ++r;
         }
         return r;
     }
+
     function bnBitCount() {
         var r = 0,
-        x = this.s & this.DM;
+            x = this.s & this.DM;
         for (var i = 0; i < this.t; ++i) r += cbit(this[i] ^ x);
         return r;
     }
+
     function bnTestBit(n) {
         var j = Math.floor(n / this.DB);
         if (j >= this.t) return (this.s != 0);
         return ((this[j] & (1 << (n % this.DB))) != 0);
     }
+
     function bnpChangeBit(n, op) {
         var r = BigInteger.ONE.shiftLeft(n);
         this.bitwiseTo(r, op, r);
         return r;
     }
+
     function bnSetBit(n) {
         return this.changeBit(n, op_or);
     }
+
     function bnClearBit(n) {
         return this.changeBit(n, op_andnot);
     }
+
     function bnFlipBit(n) {
         return this.changeBit(n, op_xor);
     }
+
     function bnpAddTo(a, r) {
         var i = 0,
-        c = 0,
-        m = Math.min(a.t, this.t);
+            c = 0,
+            m = Math.min(a.t, this.t);
         while (i < m) {
             c += this[i] + a[i];
             r[i++] = c & this.DM;
@@ -816,72 +902,91 @@ var JSEncryptExports = {}; (function(exports) {
         r.t = i;
         r.clamp();
     }
+
     function bnAdd(a) {
         var r = nbi();
         this.addTo(a, r);
         return r;
     }
+
     function bnSubtract(a) {
         var r = nbi();
         this.subTo(a, r);
         return r;
     }
+
     function bnMultiply(a) {
         var r = nbi();
         this.multiplyTo(a, r);
         return r;
     }
+
     function bnSquare() {
         var r = nbi();
         this.squareTo(r);
         return r;
     }
+
     function bnDivide(a) {
         var r = nbi();
         this.divRemTo(a, r, null);
         return r;
     }
+
     function bnRemainder(a) {
         var r = nbi();
         this.divRemTo(a, null, r);
         return r;
     }
+
     function bnDivideAndRemainder(a) {
         var q = nbi(),
-        r = nbi();
+            r = nbi();
         this.divRemTo(a, q, r);
         return new Array(q, r);
     }
+
     function bnpDMultiply(n) {
-        this[this.t] = this.am(0, n - 1, this, 0, 0, this.t); ++this.t;
+        this[this.t] = this.am(0, n - 1, this, 0, 0, this.t);
+        ++this.t;
         this.clamp();
     }
+
     function bnpDAddOffset(n, w) {
         if (n == 0) return;
         while (this.t <= w) this[this.t++] = 0;
         this[w] += n;
         while (this[w] >= this.DV) {
             this[w] -= this.DV;
-            if (++w >= this.t) this[this.t++] = 0; ++this[w];
+            if (++w >= this.t) this[this.t++] = 0;
+            ++this[w];
         }
     }
-    function NullExp() {}
+
+    function NullExp() {
+    }
+
     function nNop(x) {
         return x;
     }
+
     function nMulTo(x, y, r) {
         x.multiplyTo(y, r);
     }
+
     function nSqrTo(x, r) {
         x.squareTo(r);
     }
+
     NullExp.prototype.convert = nNop;
     NullExp.prototype.revert = nNop;
     NullExp.prototype.mulTo = nMulTo;
     NullExp.prototype.sqrTo = nSqrTo;
+
     function bnPow(e) {
         return this.exp(e, new NullExp());
     }
+
     function bnpMultiplyLowerTo(a, n, r) {
         var i = Math.min(this.t + a.t, n);
         r.s = 0;
@@ -892,7 +997,9 @@ var JSEncryptExports = {}; (function(exports) {
         for (j = Math.min(a.t, n); i < j; ++i) this.am(0, a[i], r, i, 0, n - i);
         r.clamp();
     }
-    function bnpMultiplyUpperTo(a, n, r) {--n;
+
+    function bnpMultiplyUpperTo(a, n, r) {
+        --n;
         var i = r.t = this.t + a.t - n;
         r.s = 0;
         while (--i >= 0) r[i] = 0;
@@ -900,6 +1007,7 @@ var JSEncryptExports = {}; (function(exports) {
         r.clamp();
         r.drShiftTo(1, r);
     }
+
     function Barrett(m) {
         this.r2 = nbi();
         this.q3 = nbi();
@@ -907,6 +1015,7 @@ var JSEncryptExports = {}; (function(exports) {
         this.mu = this.r2.divide(m);
         this.m = m;
     }
+
     function barrettConvert(x) {
         if (x.s < 0 || x.t > 2 * this.m.t) return x.mod(this.m);
         else if (x.compareTo(this.m) < 0) return x;
@@ -917,9 +1026,11 @@ var JSEncryptExports = {}; (function(exports) {
             return r;
         }
     }
+
     function barrettRevert(x) {
         return x;
     }
+
     function barrettReduce(x) {
         x.drShiftTo(this.m.t - 1, this.r2);
         if (x.t > this.m.t + 1) {
@@ -932,24 +1043,28 @@ var JSEncryptExports = {}; (function(exports) {
         x.subTo(this.r2, x);
         while (x.compareTo(this.m) >= 0) x.subTo(this.m, x);
     }
+
     function barrettSqrTo(x, r) {
         x.squareTo(r);
         this.reduce(r);
     }
+
     function barrettMulTo(x, y, r) {
         x.multiplyTo(y, r);
         this.reduce(r);
     }
+
     Barrett.prototype.convert = barrettConvert;
     Barrett.prototype.revert = barrettRevert;
     Barrett.prototype.reduce = barrettReduce;
     Barrett.prototype.mulTo = barrettMulTo;
     Barrett.prototype.sqrTo = barrettSqrTo;
+
     function bnModPow(e, m) {
         var i = e.bitLength(),
-        k,
-        r = nbv(1),
-        z;
+            k,
+            r = nbv(1),
+            z;
         if (i <= 0) return r;
         else if (i < 18) k = 1;
         else if (i < 48) k = 3;
@@ -960,9 +1075,9 @@ var JSEncryptExports = {}; (function(exports) {
         else if (m.isEven()) z = new Barrett(m);
         else z = new Montgomery(m);
         var g = new Array(),
-        n = 3,
-        k1 = k - 1,
-        km = (1 << k) - 1;
+            n = 3,
+            k1 = k - 1,
+            km = (1 << k) - 1;
         g[1] = z.convert(this);
         if (k > 1) {
             var g2 = nbi();
@@ -974,9 +1089,9 @@ var JSEncryptExports = {}; (function(exports) {
             }
         }
         var j = e.t - 1,
-        w, is1 = true,
-        r2 = nbi(),
-        t;
+            w, is1 = true,
+            r2 = nbi(),
+            t;
         i = nbits(e[j]) - 1;
         while (j >= 0) {
             if (i >= k1) w = (e[j] >> (i - k1)) & km;
@@ -986,10 +1101,12 @@ var JSEncryptExports = {}; (function(exports) {
             }
             n = k;
             while ((w & 1) == 0) {
-                w >>= 1; --n;
+                w >>= 1;
+                --n;
             }
             if ((i -= n) < 0) {
-                i += this.DB; --j;
+                i += this.DB;
+                --j;
             }
             if (is1) {
                 g[w].copyTo(r);
@@ -1014,12 +1131,14 @@ var JSEncryptExports = {}; (function(exports) {
                 r = r2;
                 r2 = t;
                 if (--i < 0) {
-                    i = this.DB - 1; --j;
+                    i = this.DB - 1;
+                    --j;
                 }
             }
         }
         return z.revert(r);
     }
+
     function bnGCD(a) {
         var x = (this.s < 0) ? this.negate() : this.clone();
         var y = (a.s < 0) ? a.negate() : a.clone();
@@ -1029,7 +1148,7 @@ var JSEncryptExports = {}; (function(exports) {
             y = t;
         }
         var i = x.getLowestSetBit(),
-        g = y.getLowestSetBit();
+            g = y.getLowestSetBit();
         if (g < 0) return x;
         if (i < g) g = i;
         if (g > 0) {
@@ -1050,23 +1169,25 @@ var JSEncryptExports = {}; (function(exports) {
         if (g > 0) y.lShiftTo(g, y);
         return y;
     }
+
     function bnpModInt(n) {
         if (n <= 0) return 0;
         var d = this.DV % n,
-        r = (this.s < 0) ? n - 1 : 0;
+            r = (this.s < 0) ? n - 1 : 0;
         if (this.t > 0) if (d == 0) r = this[0] % n;
         else for (var i = this.t - 1; i >= 0; --i) r = (d * r + this[i]) % n;
         return r;
     }
+
     function bnModInverse(m) {
         var ac = m.isEven();
         if ((this.isEven() && ac) || m.signum() == 0) return BigInteger.ZERO;
         var u = m.clone(),
-        v = this.clone();
+            v = this.clone();
         var a = nbv(1),
-        b = nbv(0),
-        c = nbv(0),
-        d = nbv(1);
+            b = nbv(0),
+            c = nbv(0),
+            d = nbv(1);
         while (u.signum() != 0) {
             while (u.isEven()) {
                 u.rShiftTo(1, u);
@@ -1107,8 +1228,10 @@ var JSEncryptExports = {}; (function(exports) {
         if (d.signum() < 0) return d.add(m);
         else return d;
     }
+
     var lowprimes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997];
     var lplim = (1 << 26) / lowprimes[lowprimes.length - 1];
+
     function bnIsProbablePrime(t) {
         var i, x = this.abs();
         if (x.t == 1 && x[0] <= lowprimes[lowprimes.length - 1]) {
@@ -1119,13 +1242,14 @@ var JSEncryptExports = {}; (function(exports) {
         i = 1;
         while (i < lowprimes.length) {
             var m = lowprimes[i],
-            j = i + 1;
+                j = i + 1;
             while (j < lowprimes.length && m < lplim) m *= lowprimes[j++];
             m = x.modInt(m);
             while (i < j) if (m % lowprimes[i++] == 0) return false;
         }
         return x.millerRabin(t);
     }
+
     function bnpMillerRabin(t) {
         var n1 = this.subtract(BigInteger.ONE);
         var k = n1.getLowestSetBit();
@@ -1139,7 +1263,7 @@ var JSEncryptExports = {}; (function(exports) {
             var y = a.modPow(r, this);
             if (y.compareTo(BigInteger.ONE) != 0 && y.compareTo(n1) != 0) {
                 var j = 1;
-                while (j++<k && y.compareTo(n1) != 0) {
+                while (j++ < k && y.compareTo(n1) != 0) {
                     y = y.modPowInt(2, this);
                     if (y.compareTo(BigInteger.ONE) == 0) return false;
                 }
@@ -1148,6 +1272,7 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return true;
     }
+
     BigInteger.prototype.chunkSize = bnpChunkSize;
     BigInteger.prototype.toRadix = bnpToRadix;
     BigInteger.prototype.fromRadix = bnpFromRadix;
@@ -1195,11 +1320,13 @@ var JSEncryptExports = {}; (function(exports) {
     BigInteger.prototype.gcd = bnGCD;
     BigInteger.prototype.isProbablePrime = bnIsProbablePrime;
     BigInteger.prototype.square = bnSquare;
+
     function Arcfour() {
         this.i = 0;
         this.j = 0;
         this.S = new Array();
     }
+
     function ARC4init(key) {
         var i, j, t;
         for (i = 0; i < 256; ++i) this.S[i] = i;
@@ -1213,6 +1340,7 @@ var JSEncryptExports = {}; (function(exports) {
         this.i = 0;
         this.j = 0;
     }
+
     function ARC4next() {
         var t;
         this.i = (this.i + 1) & 255;
@@ -1222,11 +1350,14 @@ var JSEncryptExports = {}; (function(exports) {
         this.S[this.j] = t;
         return this.S[(t + this.S[this.i]) & 255];
     }
+
     Arcfour.prototype.init = ARC4init;
     Arcfour.prototype.next = ARC4next;
+
     function prng_newstate() {
         return new Arcfour();
     }
+
     var rng_psize = 256;
     var rng_state;
     var rng_pool;
@@ -1240,7 +1371,7 @@ var JSEncryptExports = {}; (function(exports) {
             window.crypto.getRandomValues(z);
             for (t = 0; t < z.length; ++t) rng_pool[rng_pptr++] = z[t] & 255;
         }
-        var onMouseMoveListener = function(ev) {
+        var onMouseMoveListener = function (ev) {
             this.count = this.count || 0;
             if (this.count >= 256 || rng_pptr >= rng_psize) {
                 if (window.removeEventListener) window.removeEventListener("mousemove", onMouseMoveListener);
@@ -1254,6 +1385,7 @@ var JSEncryptExports = {}; (function(exports) {
         if (window.addEventListener) window.addEventListener("mousemove", onMouseMoveListener);
         else if (window.attachEvent) window.attachEvent("onmousemove", onMouseMoveListener);
     }
+
     function rng_get_byte() {
         if (rng_state == null) {
             rng_state = prng_newstate();
@@ -1267,15 +1399,21 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return rng_state.next();
     }
+
     function rng_get_bytes(ba) {
         var i;
         for (i = 0; i < ba.length; ++i) ba[i] = rng_get_byte();
     }
-    function SecureRandom() {}
+
+    function SecureRandom() {
+    }
+
     SecureRandom.prototype.nextBytes = rng_get_bytes;
+
     function parseBigInt(str, r) {
         return new BigInteger(str, r);
     }
+
     function linebrk(s, n) {
         var ret = "";
         var i = 0;
@@ -1285,10 +1423,12 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return ret + s.substring(i, s.length);
     }
+
     function byte2Hex(b) {
         if (b < 0x10) return "0" + b.toString(16);
         else return b.toString(16);
     }
+
     function pkcs1pad2(s, n) {
         if (n < s.length + 11) {
             console.error("Message too long for RSA");
@@ -1321,6 +1461,7 @@ var JSEncryptExports = {}; (function(exports) {
         ba[--n] = 0;
         return new BigInteger(ba);
     }
+
     function RSAKey() {
         this.n = null;
         this.e = 0;
@@ -1331,15 +1472,18 @@ var JSEncryptExports = {}; (function(exports) {
         this.dmq1 = null;
         this.coeff = null;
     }
+
     function RSASetPublic(N, E) {
         if (N != null && E != null && N.length > 0 && E.length > 0) {
             this.n = parseBigInt(N, 16);
             this.e = parseInt(E, 16);
         } else console.error("Invalid RSA public key");
     }
+
     function RSADoPublic(x) {
         return x.modPowInt(this.e, this.n);
     }
+
     function RSAEncrypt(text) {
         var m = pkcs1pad2(text, (this.n.bitLength() + 7) >> 3);
         if (m == null) return null;
@@ -1349,14 +1493,17 @@ var JSEncryptExports = {}; (function(exports) {
         if ((h.length & 1) == 0) return h;
         else return "0" + h;
     }
+
     RSAKey.prototype.doPublic = RSADoPublic;
     RSAKey.prototype.setPublic = RSASetPublic;
     RSAKey.prototype.encrypt = RSAEncrypt;
+
     function pkcs1unpad2(d, n) {
         var b = d.toByteArray();
         var i = 0;
-        while (i < b.length && b[i] == 0)++i;
-        if (b.length - i != n - 1 || b[i] != 2) return null; ++i;
+        while (i < b.length && b[i] == 0) ++i;
+        if (b.length - i != n - 1 || b[i] != 2) return null;
+        ++i;
         while (b[i] != 0) if (++i >= b.length) return null;
         var ret = "";
         while (++i < b.length) {
@@ -1364,7 +1511,8 @@ var JSEncryptExports = {}; (function(exports) {
             if (c < 128) {
                 ret += String.fromCharCode(c);
             } else if ((c > 191) && (c < 224)) {
-                ret += String.fromCharCode(((c & 31) << 6) | (b[i + 1] & 63)); ++i;
+                ret += String.fromCharCode(((c & 31) << 6) | (b[i + 1] & 63));
+                ++i;
             } else {
                 ret += String.fromCharCode(((c & 15) << 12) | ((b[i + 1] & 63) << 6) | (b[i + 2] & 63));
                 i += 2;
@@ -1372,6 +1520,7 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return ret;
     }
+
     function RSASetPrivate(N, E, D) {
         if (N != null && E != null && N.length > 0 && E.length > 0) {
             this.n = parseBigInt(N, 16);
@@ -1379,6 +1528,7 @@ var JSEncryptExports = {}; (function(exports) {
             this.d = parseBigInt(D, 16);
         } else console.error("Invalid RSA private key");
     }
+
     function RSASetPrivateEx(N, E, D, P, Q, DP, DQ, C) {
         if (N != null && E != null && N.length > 0 && E.length > 0) {
             this.n = parseBigInt(N, 16);
@@ -1391,17 +1541,18 @@ var JSEncryptExports = {}; (function(exports) {
             this.coeff = parseBigInt(C, 16);
         } else console.error("Invalid RSA private key");
     }
+
     function RSAGenerate(B, E) {
         var rng = new SecureRandom();
         var qs = B >> 1;
         this.e = parseInt(E, 16);
         var ee = new BigInteger(E, 16);
-        for (;;) {
-            for (;;) {
+        for (; ;) {
+            for (; ;) {
                 this.p = new BigInteger(B - qs, 1, rng);
                 if (this.p.subtract(BigInteger.ONE).gcd(ee).compareTo(BigInteger.ONE) == 0 && this.p.isProbablePrime(10)) break;
             }
-            for (;;) {
+            for (; ;) {
                 this.q = new BigInteger(qs, 1, rng);
                 if (this.q.subtract(BigInteger.ONE).gcd(ee).compareTo(BigInteger.ONE) == 0 && this.q.isProbablePrime(10)) break;
             }
@@ -1423,6 +1574,7 @@ var JSEncryptExports = {}; (function(exports) {
             }
         }
     }
+
     function RSADoPrivate(x) {
         if (this.p == null || this.q == null) return x.modPow(this.d, this.n);
         var xp = x.mod(this.p).modPow(this.dmp1, this.p);
@@ -1430,25 +1582,28 @@ var JSEncryptExports = {}; (function(exports) {
         while (xp.compareTo(xq) < 0) xp = xp.add(this.p);
         return xp.subtract(xq).multiply(this.coeff).mod(this.p).multiply(this.q).add(xq);
     }
+
     function RSADecrypt(ctext) {
         var c = parseBigInt(ctext, 16);
         var m = this.doPrivate(c);
         if (m == null) return null;
         return pkcs1unpad2(m, (this.n.bitLength() + 7) >> 3);
     }
+
     RSAKey.prototype.doPrivate = RSADoPrivate;
     RSAKey.prototype.setPrivate = RSASetPrivate;
     RSAKey.prototype.setPrivateEx = RSASetPrivateEx;
     RSAKey.prototype.generate = RSAGenerate;
-    RSAKey.prototype.decrypt = RSADecrypt; (function() {
-        var RSAGenerateAsync = function(B, E, callback) {
+    RSAKey.prototype.decrypt = RSADecrypt;
+    (function () {
+        var RSAGenerateAsync = function (B, E, callback) {
             var rng = new SecureRandom();
             var qs = B >> 1;
             this.e = parseInt(E, 16);
             var ee = new BigInteger(E, 16);
             var rsa = this;
-            var loop1 = function() {
-                var loop4 = function() {
+            var loop1 = function () {
+                var loop4 = function () {
                     if (rsa.p.compareTo(rsa.q) <= 0) {
                         var t = rsa.p;
                         rsa.p = rsa.q;
@@ -1463,48 +1618,48 @@ var JSEncryptExports = {}; (function(exports) {
                         rsa.dmp1 = rsa.d.mod(p1);
                         rsa.dmq1 = rsa.d.mod(q1);
                         rsa.coeff = rsa.q.modInverse(rsa.p);
-                        setTimeout(function() {
-                            callback()
-                        },
-                        0);
+                        setTimeout(function () {
+                                callback()
+                            },
+                            0);
                     } else {
                         setTimeout(loop1, 0);
                     }
                 };
-                var loop3 = function() {
+                var loop3 = function () {
                     rsa.q = nbi();
                     rsa.q.fromNumberAsync(qs, 1, rng,
-                    function() {
-                        rsa.q.subtract(BigInteger.ONE).gcda(ee,
-                        function(r) {
-                            if (r.compareTo(BigInteger.ONE) == 0 && rsa.q.isProbablePrime(10)) {
-                                setTimeout(loop4, 0);
-                            } else {
-                                setTimeout(loop3, 0);
-                            }
+                        function () {
+                            rsa.q.subtract(BigInteger.ONE).gcda(ee,
+                                function (r) {
+                                    if (r.compareTo(BigInteger.ONE) == 0 && rsa.q.isProbablePrime(10)) {
+                                        setTimeout(loop4, 0);
+                                    } else {
+                                        setTimeout(loop3, 0);
+                                    }
+                                });
                         });
-                    });
                 };
-                var loop2 = function() {
+                var loop2 = function () {
                     rsa.p = nbi();
                     rsa.p.fromNumberAsync(B - qs, 1, rng,
-                    function() {
-                        rsa.p.subtract(BigInteger.ONE).gcda(ee,
-                        function(r) {
-                            if (r.compareTo(BigInteger.ONE) == 0 && rsa.p.isProbablePrime(10)) {
-                                setTimeout(loop3, 0);
-                            } else {
-                                setTimeout(loop2, 0);
-                            }
+                        function () {
+                            rsa.p.subtract(BigInteger.ONE).gcda(ee,
+                                function (r) {
+                                    if (r.compareTo(BigInteger.ONE) == 0 && rsa.p.isProbablePrime(10)) {
+                                        setTimeout(loop3, 0);
+                                    } else {
+                                        setTimeout(loop2, 0);
+                                    }
+                                });
                         });
-                    });
                 };
                 setTimeout(loop2, 0);
             };
             setTimeout(loop1, 0);
         };
         RSAKey.prototype.generateAsync = RSAGenerateAsync;
-        var bnGCDAsync = function(a, callback) {
+        var bnGCDAsync = function (a, callback) {
             var x = (this.s < 0) ? this.negate() : this.clone();
             var y = (a.s < 0) ? a.negate() : a.clone();
             if (x.compareTo(y) < 0) {
@@ -1513,7 +1668,7 @@ var JSEncryptExports = {}; (function(exports) {
                 y = t;
             }
             var i = x.getLowestSetBit(),
-            g = y.getLowestSetBit();
+                g = y.getLowestSetBit();
             if (g < 0) {
                 callback(x);
                 return;
@@ -1523,7 +1678,7 @@ var JSEncryptExports = {}; (function(exports) {
                 x.rShiftTo(g, x);
                 y.rShiftTo(g, y);
             }
-            var gcda1 = function() {
+            var gcda1 = function () {
                 if ((i = x.getLowestSetBit()) > 0) {
                     x.rShiftTo(i, x);
                 }
@@ -1537,12 +1692,12 @@ var JSEncryptExports = {}; (function(exports) {
                     y.subTo(x, y);
                     y.rShiftTo(1, y);
                 }
-                if (! (x.signum() > 0)) {
+                if (!(x.signum() > 0)) {
                     if (g > 0) y.lShiftTo(g, y);
-                    setTimeout(function() {
-                        callback(y)
-                    },
-                    0);
+                    setTimeout(function () {
+                            callback(y)
+                        },
+                        0);
                 } else {
                     setTimeout(gcda1, 0);
                 }
@@ -1550,7 +1705,7 @@ var JSEncryptExports = {}; (function(exports) {
             setTimeout(gcda1, 10);
         };
         BigInteger.prototype.gcda = bnGCDAsync;
-        var bnpFromNumberAsync = function(a, b, c, callback) {
+        var bnpFromNumberAsync = function (a, b, c, callback) {
             if ("number" == typeof b) {
                 if (a < 2) {
                     this.fromInt(1);
@@ -1563,14 +1718,14 @@ var JSEncryptExports = {}; (function(exports) {
                         this.dAddOffset(1, 0);
                     }
                     var bnp = this;
-                    var bnpfn1 = function() {
+                    var bnpfn1 = function () {
                         bnp.dAddOffset(2, 0);
                         if (bnp.bitLength() > a) bnp.subTo(BigInteger.ONE.shiftLeft(a - 1), bnp);
                         if (bnp.isProbablePrime(b)) {
-                            setTimeout(function() {
-                                callback()
-                            },
-                            0);
+                            setTimeout(function () {
+                                    callback()
+                                },
+                                0);
                         } else {
                             setTimeout(bnpfn1, 0);
                         }
@@ -1579,7 +1734,7 @@ var JSEncryptExports = {}; (function(exports) {
                 }
             } else {
                 var x = new Array(),
-                t = a & 7;
+                    t = a & 7;
                 x.length = (a >> 3) + 1;
                 b.nextBytes(x);
                 if (t > 0) x[0] &= ((1 << t) - 1);
@@ -1591,6 +1746,7 @@ var JSEncryptExports = {}; (function(exports) {
     })();
     var b64map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     var b64pad = "=";
+
     function hex2b64(h) {
         var i;
         var c;
@@ -1609,6 +1765,7 @@ var JSEncryptExports = {}; (function(exports) {
         while ((ret.length & 3) > 0) ret += b64pad;
         return ret;
     }
+
     function b64tohex(s) {
         var ret = ""
         var i;
@@ -1640,6 +1797,7 @@ var JSEncryptExports = {}; (function(exports) {
         if (k == 1) ret += int2char(slop << 2);
         return ret;
     }
+
     function b64toBA(s) {
         var h = b64tohex(s);
         var i;
@@ -1649,43 +1807,44 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return a;
     }
+
     var JSX = JSX || {};
     JSX.env = JSX.env || {};
     var L = JSX,
-    OP = Object.prototype,
-    FUNCTION_TOSTRING = '[object Function]',
-    ADD = ["toString", "valueOf"];
-    JSX.env.parseUA = function(agent) {
-        var numberify = function(s) {
-            var c = 0;
-            return parseFloat(s.replace(/\./g,
-            function() {
-                return (c++==1) ? '': '.';
-            }));
-        },
-        nav = navigator,
-        o = {
-            ie: 0,
-            opera: 0,
-            gecko: 0,
-            webkit: 0,
-            chrome: 0,
-            mobile: null,
-            air: 0,
-            ipad: 0,
-            iphone: 0,
-            ipod: 0,
-            ios: null,
-            android: 0,
-            webos: 0,
-            caja: nav && nav.cajaVersion,
-            secure: false,
-            os: null
-        },
-        ua = agent || (navigator && navigator.userAgent),
-        loc = window && window.location,
-        href = loc && loc.href,
-        m;
+        OP = Object.prototype,
+        FUNCTION_TOSTRING = '[object Function]',
+        ADD = ["toString", "valueOf"];
+    JSX.env.parseUA = function (agent) {
+        var numberify = function (s) {
+                var c = 0;
+                return parseFloat(s.replace(/\./g,
+                    function () {
+                        return (c++ == 1) ? '' : '.';
+                    }));
+            },
+            nav = navigator,
+            o = {
+                ie: 0,
+                opera: 0,
+                gecko: 0,
+                webkit: 0,
+                chrome: 0,
+                mobile: null,
+                air: 0,
+                ipad: 0,
+                iphone: 0,
+                ipod: 0,
+                ios: null,
+                android: 0,
+                webos: 0,
+                caja: nav && nav.cajaVersion,
+                secure: false,
+                os: null
+            },
+            ua = agent || (navigator && navigator.userAgent),
+            loc = window && window.location,
+            href = loc && loc.href,
+            m;
         o.secure = href && (href.toLowerCase().indexOf("https") === 0);
         if (ua) {
             if ((/windows|win32/i).test(ua)) {
@@ -1775,26 +1934,28 @@ var JSEncryptExports = {}; (function(exports) {
         return o;
     };
     JSX.env.ua = JSX.env.parseUA();
-    JSX.isFunction = function(o) {
+    JSX.isFunction = function (o) {
         return (typeof o === 'function') || OP.toString.apply(o) === FUNCTION_TOSTRING;
     };
     JSX._IEEnumFix = (JSX.env.ua.ie) ?
-    function(r, s) {
-        var i, fname, f;
-        for (i = 0; i < ADD.length; i = i + 1) {
-            fname = ADD[i];
-            f = s[fname];
-            if (L.isFunction(f) && f != OP[fname]) {
-                r[fname] = f;
+        function (r, s) {
+            var i, fname, f;
+            for (i = 0; i < ADD.length; i = i + 1) {
+                fname = ADD[i];
+                f = s[fname];
+                if (L.isFunction(f) && f != OP[fname]) {
+                    r[fname] = f;
+                }
             }
-        }
-    }: function() {};
-    JSX.extend = function(subc, superc, overrides) {
+        } : function () {
+        };
+    JSX.extend = function (subc, superc, overrides) {
         if (!superc || !subc) {
             throw new Error("extend failed, please check that " + "all dependencies are included.");
         }
-        var F = function() {},
-        i;
+        var F = function () {
+            },
+            i;
         F.prototype = superc.prototype;
         subc.prototype = new F();
         subc.prototype.constructor = subc;
@@ -1814,13 +1975,13 @@ var JSEncryptExports = {}; (function(exports) {
     if (typeof KJUR == "undefined" || !KJUR) KJUR = {};
     if (typeof KJUR.asn1 == "undefined" || !KJUR.asn1) KJUR.asn1 = {};
     KJUR.asn1.ASN1Util = new
-    function() {
-        this.integerToByteHex = function(i) {
+    function () {
+        this.integerToByteHex = function (i) {
             var h = i.toString(16);
             if ((h.length % 2) == 1) h = '0' + h;
             return h;
         };
-        this.bigIntToMinTwosComplementsHex = function(bigIntegerValue) {
+        this.bigIntToMinTwosComplementsHex = function (bigIntegerValue) {
             var h = bigIntegerValue.toString(16);
             if (h.substr(0, 1) != '-') {
                 if (h.length % 2 == 1) {
@@ -1850,7 +2011,7 @@ var JSEncryptExports = {}; (function(exports) {
             }
             return h;
         };
-        this.getPEMStringFromHex = function(dataHex, pemHeader) {
+        this.getPEMStringFromHex = function (dataHex, pemHeader) {
             var dataWA = CryptoJS.enc.Hex.parse(dataHex);
             var dataB64 = CryptoJS.enc.Base64S.stringify(dataWA);
             var pemBody = dataB64.replace(/(.{64})/g, "$1\r\n");
@@ -1858,13 +2019,13 @@ var JSEncryptExports = {}; (function(exports) {
             return "-----BEGIN " + pemHeader + "-----\r\n" + pemBody + "\r\n-----END " + pemHeader + "-----\r\n";
         };
     };
-    KJUR.asn1.ASN1Object = function() {
+    KJUR.asn1.ASN1Object = function () {
         var isModified = true;
         var hTLV = null;
         var hT = '00'
         var hL = '00';
         var hV = '';
-        this.getLengthHexFromValue = function() {
+        this.getLengthHexFromValue = function () {
             if (typeof this.hV == "undefined" || this.hV == null) {
                 throw "this.hV is null or undefined.";
             }
@@ -1887,7 +2048,7 @@ var JSEncryptExports = {}; (function(exports) {
                 return head.toString(16) + hN;
             }
         };
-        this.getEncodedHex = function() {
+        this.getEncodedHex = function () {
             if (this.hTLV == null || this.isModified) {
                 this.hV = this.getFreshValueHex();
                 this.hL = this.getLengthHexFromValue();
@@ -1896,34 +2057,34 @@ var JSEncryptExports = {}; (function(exports) {
             }
             return this.hTLV;
         };
-        this.getValueHex = function() {
+        this.getValueHex = function () {
             this.getEncodedHex();
             return this.hV;
         }
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return '';
         };
     };
-    KJUR.asn1.DERAbstractString = function(params) {
+    KJUR.asn1.DERAbstractString = function (params) {
         KJUR.asn1.DERAbstractString.superclass.constructor.call(this);
         var s = null;
         var hV = null;
-        this.getString = function() {
+        this.getString = function () {
             return this.s;
         };
-        this.setString = function(newS) {
+        this.setString = function (newS) {
             this.hTLV = null;
             this.isModified = true;
             this.s = newS;
             this.hV = stohex(this.s);
         };
-        this.setStringHex = function(newHexString) {
+        this.setStringHex = function (newHexString) {
             this.hTLV = null;
             this.isModified = true;
             this.s = null;
             this.hV = newHexString;
         };
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return this.hV;
         };
         if (typeof params != "undefined") {
@@ -1935,16 +2096,16 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERAbstractString, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERAbstractTime = function(params) {
+    KJUR.asn1.DERAbstractTime = function (params) {
         KJUR.asn1.DERAbstractTime.superclass.constructor.call(this);
         var s = null;
         var date = null;
-        this.localDateToUTC = function(d) {
+        this.localDateToUTC = function (d) {
             utc = d.getTime() + (d.getTimezoneOffset() * 60000);
             var utcDate = new Date(utc);
             return utcDate;
         };
-        this.formatDate = function(dateObject, type) {
+        this.formatDate = function (dateObject, type) {
             var pad = this.zeroPadding;
             var d = this.localDateToUTC(dateObject);
             var year = String(d.getFullYear());
@@ -1956,37 +2117,37 @@ var JSEncryptExports = {}; (function(exports) {
             var sec = pad(String(d.getSeconds()), 2);
             return year + month + day + hour + min + sec + 'Z';
         };
-        this.zeroPadding = function(s, len) {
+        this.zeroPadding = function (s, len) {
             if (s.length >= len) return s;
             return new Array(len - s.length + 1).join('0') + s;
         };
-        this.getString = function() {
+        this.getString = function () {
             return this.s;
         };
-        this.setString = function(newS) {
+        this.setString = function (newS) {
             this.hTLV = null;
             this.isModified = true;
             this.s = newS;
             this.hV = stohex(this.s);
         };
-        this.setByDateValue = function(year, month, day, hour, min, sec) {
+        this.setByDateValue = function (year, month, day, hour, min, sec) {
             var dateObject = new Date(Date.UTC(year, month - 1, day, hour, min, sec, 0));
             this.setByDate(dateObject);
         };
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return this.hV;
         };
     };
     JSX.extend(KJUR.asn1.DERAbstractTime, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERAbstractStructured = function(params) {
+    KJUR.asn1.DERAbstractStructured = function (params) {
         KJUR.asn1.DERAbstractString.superclass.constructor.call(this);
         var asn1Array = null;
-        this.setByASN1ObjectArray = function(asn1ObjectArray) {
+        this.setByASN1ObjectArray = function (asn1ObjectArray) {
             this.hTLV = null;
             this.isModified = true;
             this.asn1Array = asn1ObjectArray;
         };
-        this.appendASN1Object = function(asn1Object) {
+        this.appendASN1Object = function (asn1Object) {
             this.hTLV = null;
             this.isModified = true;
             this.asn1Array.push(asn1Object);
@@ -1999,28 +2160,28 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERAbstractStructured, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERBoolean = function() {
+    KJUR.asn1.DERBoolean = function () {
         KJUR.asn1.DERBoolean.superclass.constructor.call(this);
         this.hT = "01";
         this.hTLV = "0101ff";
     };
     JSX.extend(KJUR.asn1.DERBoolean, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERInteger = function(params) {
+    KJUR.asn1.DERInteger = function (params) {
         KJUR.asn1.DERInteger.superclass.constructor.call(this);
         this.hT = "02";
-        this.setByBigInteger = function(bigIntegerValue) {
+        this.setByBigInteger = function (bigIntegerValue) {
             this.hTLV = null;
             this.isModified = true;
             this.hV = KJUR.asn1.ASN1Util.bigIntToMinTwosComplementsHex(bigIntegerValue);
         };
-        this.setByInteger = function(intValue) {
+        this.setByInteger = function (intValue) {
             var bi = new BigInteger(String(intValue), 10);
             this.setByBigInteger(bi);
         };
-        this.setValueHex = function(newHexString) {
+        this.setValueHex = function (newHexString) {
             this.hV = newHexString;
         };
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return this.hV;
         };
         if (typeof params != "undefined") {
@@ -2034,15 +2195,15 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERInteger, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERBitString = function(params) {
+    KJUR.asn1.DERBitString = function (params) {
         KJUR.asn1.DERBitString.superclass.constructor.call(this);
         this.hT = "03";
-        this.setHexValueIncludingUnusedBits = function(newHexStringIncludingUnusedBits) {
+        this.setHexValueIncludingUnusedBits = function (newHexStringIncludingUnusedBits) {
             this.hTLV = null;
             this.isModified = true;
             this.hV = newHexStringIncludingUnusedBits;
         };
-        this.setUnusedBitsAndHexValue = function(unusedBits, hValue) {
+        this.setUnusedBitsAndHexValue = function (unusedBits, hValue) {
             if (unusedBits < 0 || 7 < unusedBits) {
                 throw "unused bits shall be from 0 to 7: u = " + unusedBits;
             }
@@ -2051,7 +2212,7 @@ var JSEncryptExports = {}; (function(exports) {
             this.isModified = true;
             this.hV = hUnusedBits + hValue;
         };
-        this.setByBinaryString = function(binaryString) {
+        this.setByBinaryString = function (binaryString) {
             binaryString = binaryString.replace(/0+$/, '');
             var unusedBits = 8 - binaryString.length % 8;
             if (unusedBits == 8) unusedBits = 0;
@@ -2069,7 +2230,7 @@ var JSEncryptExports = {}; (function(exports) {
             this.isModified = true;
             this.hV = '0' + unusedBits + h;
         };
-        this.setByBooleanArray = function(booleanArray) {
+        this.setByBooleanArray = function (booleanArray) {
             var s = '';
             for (var i = 0; i < booleanArray.length; i++) {
                 if (booleanArray[i] == true) {
@@ -2080,14 +2241,14 @@ var JSEncryptExports = {}; (function(exports) {
             }
             this.setByBinaryString(s);
         };
-        this.newFalseArray = function(nLength) {
+        this.newFalseArray = function (nLength) {
             var a = new Array(nLength);
             for (var i = 0; i < nLength; i++) {
                 a[i] = false;
             }
             return a;
         };
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return this.hV;
         };
         if (typeof params != "undefined") {
@@ -2101,24 +2262,24 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERBitString, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DEROctetString = function(params) {
+    KJUR.asn1.DEROctetString = function (params) {
         KJUR.asn1.DEROctetString.superclass.constructor.call(this, params);
         this.hT = "04";
     };
     JSX.extend(KJUR.asn1.DEROctetString, KJUR.asn1.DERAbstractString);
-    KJUR.asn1.DERNull = function() {
+    KJUR.asn1.DERNull = function () {
         KJUR.asn1.DERNull.superclass.constructor.call(this);
         this.hT = "05";
         this.hTLV = "0500";
     };
     JSX.extend(KJUR.asn1.DERNull, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERObjectIdentifier = function(params) {
-        var itox = function(i) {
+    KJUR.asn1.DERObjectIdentifier = function (params) {
+        var itox = function (i) {
             var h = i.toString(16);
             if (h.length == 1) h = '0' + h;
             return h;
         };
-        var roidtox = function(roid) {
+        var roidtox = function (roid) {
             var h = '';
             var bi = new BigInteger(roid, 10);
             var b = bi.toString(2);
@@ -2136,13 +2297,13 @@ var JSEncryptExports = {}; (function(exports) {
         }
         KJUR.asn1.DERObjectIdentifier.superclass.constructor.call(this);
         this.hT = "06";
-        this.setValueHex = function(newHexString) {
+        this.setValueHex = function (newHexString) {
             this.hTLV = null;
             this.isModified = true;
             this.s = null;
             this.hV = newHexString;
         };
-        this.setValueOidString = function(oidString) {
+        this.setValueOidString = function (oidString) {
             if (!oidString.match(/^[0-9.]+$/)) {
                 throw "malformed oid string: " + oidString;
             }
@@ -2159,7 +2320,7 @@ var JSEncryptExports = {}; (function(exports) {
             this.s = null;
             this.hV = h;
         };
-        this.setValueName = function(oidName) {
+        this.setValueName = function (oidName) {
             if (typeof KJUR.asn1.x509.OID.name2oidList[oidName] != "undefined") {
                 var oid = KJUR.asn1.x509.OID.name2oidList[oidName];
                 this.setValueOidString(oid);
@@ -2167,7 +2328,7 @@ var JSEncryptExports = {}; (function(exports) {
                 throw "DERObjectIdentifier oidName undefined: " + oidName;
             }
         };
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return this.hV;
         };
         if (typeof params != "undefined") {
@@ -2181,35 +2342,35 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERObjectIdentifier, KJUR.asn1.ASN1Object);
-    KJUR.asn1.DERUTF8String = function(params) {
+    KJUR.asn1.DERUTF8String = function (params) {
         KJUR.asn1.DERUTF8String.superclass.constructor.call(this, params);
         this.hT = "0c";
     };
     JSX.extend(KJUR.asn1.DERUTF8String, KJUR.asn1.DERAbstractString);
-    KJUR.asn1.DERNumericString = function(params) {
+    KJUR.asn1.DERNumericString = function (params) {
         KJUR.asn1.DERNumericString.superclass.constructor.call(this, params);
         this.hT = "12";
     };
     JSX.extend(KJUR.asn1.DERNumericString, KJUR.asn1.DERAbstractString);
-    KJUR.asn1.DERPrintableString = function(params) {
+    KJUR.asn1.DERPrintableString = function (params) {
         KJUR.asn1.DERPrintableString.superclass.constructor.call(this, params);
         this.hT = "13";
     };
     JSX.extend(KJUR.asn1.DERPrintableString, KJUR.asn1.DERAbstractString);
-    KJUR.asn1.DERTeletexString = function(params) {
+    KJUR.asn1.DERTeletexString = function (params) {
         KJUR.asn1.DERTeletexString.superclass.constructor.call(this, params);
         this.hT = "14";
     };
     JSX.extend(KJUR.asn1.DERTeletexString, KJUR.asn1.DERAbstractString);
-    KJUR.asn1.DERIA5String = function(params) {
+    KJUR.asn1.DERIA5String = function (params) {
         KJUR.asn1.DERIA5String.superclass.constructor.call(this, params);
         this.hT = "16";
     };
     JSX.extend(KJUR.asn1.DERIA5String, KJUR.asn1.DERAbstractString);
-    KJUR.asn1.DERUTCTime = function(params) {
+    KJUR.asn1.DERUTCTime = function (params) {
         KJUR.asn1.DERUTCTime.superclass.constructor.call(this, params);
         this.hT = "17";
-        this.setByDate = function(dateObject) {
+        this.setByDate = function (dateObject) {
             this.hTLV = null;
             this.isModified = true;
             this.date = dateObject;
@@ -2227,10 +2388,10 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERUTCTime, KJUR.asn1.DERAbstractTime);
-    KJUR.asn1.DERGeneralizedTime = function(params) {
+    KJUR.asn1.DERGeneralizedTime = function (params) {
         KJUR.asn1.DERGeneralizedTime.superclass.constructor.call(this, params);
         this.hT = "18";
-        this.setByDate = function(dateObject) {
+        this.setByDate = function (dateObject) {
             this.hTLV = null;
             this.isModified = true;
             this.date = dateObject;
@@ -2248,10 +2409,10 @@ var JSEncryptExports = {}; (function(exports) {
         }
     };
     JSX.extend(KJUR.asn1.DERGeneralizedTime, KJUR.asn1.DERAbstractTime);
-    KJUR.asn1.DERSequence = function(params) {
+    KJUR.asn1.DERSequence = function (params) {
         KJUR.asn1.DERSequence.superclass.constructor.call(this, params);
         this.hT = "30";
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             var h = '';
             for (var i = 0; i < this.asn1Array.length; i++) {
                 var asn1Obj = this.asn1Array[i];
@@ -2262,10 +2423,10 @@ var JSEncryptExports = {}; (function(exports) {
         };
     };
     JSX.extend(KJUR.asn1.DERSequence, KJUR.asn1.DERAbstractStructured);
-    KJUR.asn1.DERSet = function(params) {
+    KJUR.asn1.DERSet = function (params) {
         KJUR.asn1.DERSet.superclass.constructor.call(this, params);
         this.hT = "31";
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             var a = new Array();
             for (var i = 0; i < this.asn1Array.length; i++) {
                 var asn1Obj = this.asn1Array[i];
@@ -2277,13 +2438,13 @@ var JSEncryptExports = {}; (function(exports) {
         };
     };
     JSX.extend(KJUR.asn1.DERSet, KJUR.asn1.DERAbstractStructured);
-    KJUR.asn1.DERTaggedObject = function(params) {
+    KJUR.asn1.DERTaggedObject = function (params) {
         KJUR.asn1.DERTaggedObject.superclass.constructor.call(this);
         this.hT = "a0";
         this.hV = '';
         this.isExplicit = true;
         this.asn1Object = null;
-        this.setASN1Object = function(isExplicitFlag, tagNoHex, asn1Object) {
+        this.setASN1Object = function (isExplicitFlag, tagNoHex, asn1Object) {
             this.hT = tagNoHex;
             this.isExplicit = isExplicitFlag;
             this.asn1Object = asn1Object;
@@ -2298,7 +2459,7 @@ var JSEncryptExports = {}; (function(exports) {
                 this.isModified = false;
             }
         };
-        this.getFreshValueHex = function() {
+        this.getFreshValueHex = function () {
             return this.hV;
         };
         if (typeof params != "undefined") {
@@ -2314,15 +2475,16 @@ var JSEncryptExports = {}; (function(exports) {
             }
         }
     };
-    JSX.extend(KJUR.asn1.DERTaggedObject, KJUR.asn1.ASN1Object); (function(undefined) {
+    JSX.extend(KJUR.asn1.DERTaggedObject, KJUR.asn1.ASN1Object);
+    (function (undefined) {
         "use strict";
         var Hex1 = {},
-        decoder;
-        Hex1.decode = function(a) {
+            decoder;
+        Hex1.decode = function (a) {
             var i;
             if (decoder === undefined) {
                 var hex = "0123456789ABCDEF",
-                ignore = " \f\n\r\t\u00A0\u2028\u2029";
+                    ignore = " \f\n\r\t\u00A0\u2028\u2029";
                 decoder = [];
                 for (i = 0; i < 16; ++i) decoder[hex.charAt(i)] = i;
                 hex = hex.toLowerCase();
@@ -2330,8 +2492,8 @@ var JSEncryptExports = {}; (function(exports) {
                 for (i = 0; i < ignore.length; ++i) decoder[ignore.charAt(i)] = -1;
             }
             var out = [],
-            bits = 0,
-            char_count = 0;
+                bits = 0,
+                char_count = 0;
             for (i = 0; i < a.length; ++i) {
                 var c = a.charAt(i);
                 if (c == '=') break;
@@ -2351,22 +2513,23 @@ var JSEncryptExports = {}; (function(exports) {
             return out;
         };
         Hex = Hex1;
-    })(); (function(undefined) {
+    })();
+    (function (undefined) {
         "use strict";
         var Base64S1 = {},
-        decoder;
-        Base64S1.decode = function(a) {
+            decoder;
+        Base64S1.decode = function (a) {
             var i;
             if (decoder === undefined) {
                 var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
-                ignore = "= \f\n\r\t\u00A0\u2028\u2029";
+                    ignore = "= \f\n\r\t\u00A0\u2028\u2029";
                 decoder = [];
                 for (i = 0; i < 64; ++i) decoder[b64.charAt(i)] = i;
                 for (i = 0; i < ignore.length; ++i) decoder[ignore.charAt(i)] = -1;
             }
             var out = [];
             var bits = 0,
-            char_count = 0;
+                char_count = 0;
             for (i = 0; i < a.length; ++i) {
                 var c = a.charAt(i);
                 if (c == '=') break;
@@ -2385,20 +2548,20 @@ var JSEncryptExports = {}; (function(exports) {
                 }
             }
             switch (char_count) {
-            case 1:
-                throw "Base64S encoding incomplete: at least 2 bits missing";
-            case 2:
-                out[out.length] = (bits >> 10);
-                break;
-            case 3:
-                out[out.length] = (bits >> 16);
-                out[out.length] = (bits >> 8) & 0xFF;
-                break;
+                case 1:
+                    throw "Base64S encoding incomplete: at least 2 bits missing";
+                case 2:
+                    out[out.length] = (bits >> 10);
+                    break;
+                case 3:
+                    out[out.length] = (bits >> 16);
+                    out[out.length] = (bits >> 8) & 0xFF;
+                    break;
             }
             return out;
         };
         Base64S1.re = /-----BEGIN [^-]+-----([A-Za-z0-9+\/=\s]+)-----END [^-]+-----|begin-Base64S[^\n]+\n([A-Za-z0-9+\/=\s]+)====/;
-        Base64S1.unarmor = function(a) {
+        Base64S1.unarmor = function (a) {
             var m = Base64S1.re.exec(a);
             if (m) {
                 if (m[1]) a = m[1];
@@ -2408,20 +2571,22 @@ var JSEncryptExports = {}; (function(exports) {
             return Base64S1.decode(a);
         };
         Base64S = Base64S1;
-    })(); (function(undefined) {
+    })();
+    (function (undefined) {
         "use strict";
         var hardLimit = 100,
-        ellipsis = "\u2026",
-        DOM = {
-            tag: function(tagName, className) {
-                var t = document.createElement(tagName);
-                t.className = className;
-                return t;
-            },
-            text: function(str) {
-                return document.createTextNode(str);
-            }
-        };
+            ellipsis = "\u2026",
+            DOM = {
+                tag: function (tagName, className) {
+                    var t = document.createElement(tagName);
+                    t.className = className;
+                    return t;
+                },
+                text: function (str) {
+                    return document.createTextNode(str);
+                }
+            };
+
         function Stream(enc, pos) {
             if (enc instanceof Stream) {
                 this.enc = enc.enc;
@@ -2431,38 +2596,39 @@ var JSEncryptExports = {}; (function(exports) {
                 this.pos = pos;
             }
         }
-        Stream.prototype.get = function(pos) {
+
+        Stream.prototype.get = function (pos) {
             if (pos === undefined) pos = this.pos++;
             if (pos >= this.enc.length) throw 'Requesting byte offset ' + pos + ' on a stream of length ' + this.enc.length;
             return this.enc[pos];
         };
         Stream.prototype.hexDigits = "0123456789ABCDEF";
-        Stream.prototype.hexByte = function(b) {
+        Stream.prototype.hexByte = function (b) {
             return this.hexDigits.charAt((b >> 4) & 0xF) + this.hexDigits.charAt(b & 0xF);
         };
-        Stream.prototype.hexDump = function(start, end, raw) {
+        Stream.prototype.hexDump = function (start, end, raw) {
             var s = "";
             for (var i = start; i < end; ++i) {
                 s += this.hexByte(this.get(i));
                 if (raw !== true) switch (i & 0xF) {
-                case 0x7:
-                    s += "  ";
-                    break;
-                case 0xF:
-                    s += "\n";
-                    break;
-                default:
-                    s += " ";
+                    case 0x7:
+                        s += "  ";
+                        break;
+                    case 0xF:
+                        s += "\n";
+                        break;
+                    default:
+                        s += " ";
                 }
             }
             return s;
         };
-        Stream.prototype.parseStringISO = function(start, end) {
+        Stream.prototype.parseStringISO = function (start, end) {
             var s = "";
             for (var i = start; i < end; ++i) s += String.fromCharCode(this.get(i));
             return s;
         };
-        Stream.prototype.parseStringUTF = function(start, end) {
+        Stream.prototype.parseStringUTF = function (start, end) {
             var s = "";
             for (var i = start; i < end;) {
                 var c = this.get(i++);
@@ -2472,7 +2638,7 @@ var JSEncryptExports = {}; (function(exports) {
             }
             return s;
         };
-        Stream.prototype.parseStringBMP = function(start, end) {
+        Stream.prototype.parseStringBMP = function (start, end) {
             var str = ""
             for (var i = start; i < end; i += 2) {
                 var high_byte = this.get(i);
@@ -2482,9 +2648,9 @@ var JSEncryptExports = {}; (function(exports) {
             return str;
         };
         Stream.prototype.reTime = /^((?:1[89]|2\d)?\d\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([01]\d|2[0-3])(?:([0-5]\d)(?:([0-5]\d)(?:[.,](\d{1,3}))?)?)?(Z|[-+](?:[0]\d|1[0-2])([0-5]\d)?)?$/;
-        Stream.prototype.parseTime = function(start, end) {
+        Stream.prototype.parseTime = function (start, end) {
             var s = this.parseStringISO(start, end),
-            m = this.reTime.exec(s);
+                m = this.reTime.exec(s);
             if (!m) return "Unrecognized time: " + s;
             s = m[1] + "-" + m[2] + "-" + m[3] + " " + m[4];
             if (m[5]) {
@@ -2503,14 +2669,15 @@ var JSEncryptExports = {}; (function(exports) {
             }
             return s;
         };
-        Stream.prototype.parseInteger = function(start, end) {
+        Stream.prototype.parseInteger = function (start, end) {
             var len = end - start;
             if (len > 4) {
                 len <<= 3;
                 var s = this.get(start);
                 if (s === 0) len -= 8;
                 else while (s < 128) {
-                    s <<= 1; --len;
+                    s <<= 1;
+                    --len;
                 }
                 return "(" + len + " bit)";
             }
@@ -2518,47 +2685,48 @@ var JSEncryptExports = {}; (function(exports) {
             for (var i = start; i < end; ++i) n = (n << 8) | this.get(i);
             return n;
         };
-        Stream.prototype.parseBitString = function(start, end) {
+        Stream.prototype.parseBitString = function (start, end) {
             var unusedBit = this.get(start),
-            lenBit = ((end - start - 1) << 3) - unusedBit,
-            s = "(" + lenBit + " bit)";
+                lenBit = ((end - start - 1) << 3) - unusedBit,
+                s = "(" + lenBit + " bit)";
             if (lenBit <= 20) {
                 var skip = unusedBit;
                 s += " ";
                 for (var i = end - 1; i > start; --i) {
                     var b = this.get(i);
-                    for (var j = skip; j < 8; ++j) s += (b >> j) & 1 ? "1": "0";
+                    for (var j = skip; j < 8; ++j) s += (b >> j) & 1 ? "1" : "0";
                     skip = 0;
                 }
             }
             return s;
         };
-        Stream.prototype.parseOctetString = function(start, end) {
+        Stream.prototype.parseOctetString = function (start, end) {
             var len = end - start,
-            s = "(" + len + " byte) ";
+                s = "(" + len + " byte) ";
             if (len > hardLimit) end = start + hardLimit;
             for (var i = start; i < end; ++i) s += this.hexByte(this.get(i));
             if (len > hardLimit) s += ellipsis;
             return s;
         };
-        Stream.prototype.parseOID = function(start, end) {
+        Stream.prototype.parseOID = function (start, end) {
             var s = '',
-            n = 0,
-            bits = 0;
+                n = 0,
+                bits = 0;
             for (var i = start; i < end; ++i) {
                 var v = this.get(i);
                 n = (n << 7) | (v & 0x7F);
                 bits += 7;
-                if (! (v & 0x80)) {
+                if (!(v & 0x80)) {
                     if (s === '') {
                         var m = n < 80 ? n < 40 ? 0 : 1 : 2;
                         s = m + "." + (n - m * 40);
-                    } else s += "." + ((bits >= 31) ? "bigint": n);
+                    } else s += "." + ((bits >= 31) ? "bigint" : n);
                     n = bits = 0;
                 }
             }
             return s;
         };
+
         function ASN11(stream, header, length, tag, sub) {
             this.stream = stream;
             this.header = header;
@@ -2566,136 +2734,137 @@ var JSEncryptExports = {}; (function(exports) {
             this.tag = tag;
             this.sub = sub;
         }
-        ASN11.prototype.typeName = function() {
+
+        ASN11.prototype.typeName = function () {
             if (this.tag === undefined) return "unknown";
             var tagClass = this.tag >> 6,
-            tagConstructed = (this.tag >> 5) & 1,
-            tagNumber = this.tag & 0x1F;
+                tagConstructed = (this.tag >> 5) & 1,
+                tagNumber = this.tag & 0x1F;
             switch (tagClass) {
-            case 0:
-                switch (tagNumber) {
-                case 0x00:
-                    return "EOC";
-                case 0x01:
-                    return "BOOLEAN";
-                case 0x02:
-                    return "INTEGER";
-                case 0x03:
-                    return "BIT_STRING";
-                case 0x04:
-                    return "OCTET_STRING";
-                case 0x05:
-                    return "NULL";
-                case 0x06:
-                    return "OBJECT_IDENTIFIER";
-                case 0x07:
-                    return "ObjectDescriptor";
-                case 0x08:
-                    return "EXTERNAL";
-                case 0x09:
-                    return "REAL";
-                case 0x0A:
-                    return "ENUMERATED";
-                case 0x0B:
-                    return "EMBEDDED_PDV";
-                case 0x0C:
-                    return "UTF8String";
-                case 0x10:
-                    return "SEQUENCE";
-                case 0x11:
-                    return "SET";
-                case 0x12:
-                    return "NumericString";
-                case 0x13:
-                    return "PrintableString";
-                case 0x14:
-                    return "TeletexString";
-                case 0x15:
-                    return "VideotexString";
-                case 0x16:
-                    return "IA5String";
-                case 0x17:
-                    return "UTCTime";
-                case 0x18:
-                    return "GeneralizedTime";
-                case 0x19:
-                    return "GraphicString";
-                case 0x1A:
-                    return "VisibleString";
-                case 0x1B:
-                    return "GeneralString";
-                case 0x1C:
-                    return "UniversalString";
-                case 0x1E:
-                    return "BMPString";
-                default:
-                    return "Universal_" + tagNumber.toString(16);
-                }
-            case 1:
-                return "Application_" + tagNumber.toString(16);
-            case 2:
-                return "[" + tagNumber + "]";
-            case 3:
-                return "Private_" + tagNumber.toString(16);
+                case 0:
+                    switch (tagNumber) {
+                        case 0x00:
+                            return "EOC";
+                        case 0x01:
+                            return "BOOLEAN";
+                        case 0x02:
+                            return "INTEGER";
+                        case 0x03:
+                            return "BIT_STRING";
+                        case 0x04:
+                            return "OCTET_STRING";
+                        case 0x05:
+                            return "NULL";
+                        case 0x06:
+                            return "OBJECT_IDENTIFIER";
+                        case 0x07:
+                            return "ObjectDescriptor";
+                        case 0x08:
+                            return "EXTERNAL";
+                        case 0x09:
+                            return "REAL";
+                        case 0x0A:
+                            return "ENUMERATED";
+                        case 0x0B:
+                            return "EMBEDDED_PDV";
+                        case 0x0C:
+                            return "UTF8String";
+                        case 0x10:
+                            return "SEQUENCE";
+                        case 0x11:
+                            return "SET";
+                        case 0x12:
+                            return "NumericString";
+                        case 0x13:
+                            return "PrintableString";
+                        case 0x14:
+                            return "TeletexString";
+                        case 0x15:
+                            return "VideotexString";
+                        case 0x16:
+                            return "IA5String";
+                        case 0x17:
+                            return "UTCTime";
+                        case 0x18:
+                            return "GeneralizedTime";
+                        case 0x19:
+                            return "GraphicString";
+                        case 0x1A:
+                            return "VisibleString";
+                        case 0x1B:
+                            return "GeneralString";
+                        case 0x1C:
+                            return "UniversalString";
+                        case 0x1E:
+                            return "BMPString";
+                        default:
+                            return "Universal_" + tagNumber.toString(16);
+                    }
+                case 1:
+                    return "Application_" + tagNumber.toString(16);
+                case 2:
+                    return "[" + tagNumber + "]";
+                case 3:
+                    return "Private_" + tagNumber.toString(16);
             }
         };
         ASN11.prototype.reSeemsASCII = /^[ -~]+$/;
-        ASN11.prototype.content = function() {
+        ASN11.prototype.content = function () {
             if (this.tag === undefined) return null;
             var tagClass = this.tag >> 6,
-            tagNumber = this.tag & 0x1F,
-            content = this.posContent(),
-            len = Math.abs(this.length);
+                tagNumber = this.tag & 0x1F,
+                content = this.posContent(),
+                len = Math.abs(this.length);
             if (tagClass !== 0) {
                 if (this.sub !== null) return "(" + this.sub.length + " elem)";
                 var s = this.stream.parseStringISO(content, content + Math.min(len, hardLimit));
-                if (this.reSeemsASCII.test(s)) return s.substring(0, 2 * hardLimit) + ((s.length > 2 * hardLimit) ? ellipsis: "");
+                if (this.reSeemsASCII.test(s)) return s.substring(0, 2 * hardLimit) + ((s.length > 2 * hardLimit) ? ellipsis : "");
                 else return this.stream.parseOctetString(content, content + len);
             }
             switch (tagNumber) {
-            case 0x01:
-                return (this.stream.get(content) === 0) ? "false": "true";
-            case 0x02:
-                return this.stream.parseInteger(content, content + len);
-            case 0x03:
-                return this.sub ? "(" + this.sub.length + " elem)": this.stream.parseBitString(content, content + len);
-            case 0x04:
-                return this.sub ? "(" + this.sub.length + " elem)": this.stream.parseOctetString(content, content + len);
-            case 0x06:
-                return this.stream.parseOID(content, content + len);
-            case 0x10:
-            case 0x11:
-                return "(" + this.sub.length + " elem)";
-            case 0x0C:
-                return this.stream.parseStringUTF(content, content + len);
-            case 0x12:
-            case 0x13:
-            case 0x14:
-            case 0x15:
-            case 0x16:
-            case 0x1A:
-                return this.stream.parseStringISO(content, content + len);
-            case 0x1E:
-                return this.stream.parseStringBMP(content, content + len);
-            case 0x17:
-            case 0x18:
-                return this.stream.parseTime(content, content + len);
+                case 0x01:
+                    return (this.stream.get(content) === 0) ? "false" : "true";
+                case 0x02:
+                    return this.stream.parseInteger(content, content + len);
+                case 0x03:
+                    return this.sub ? "(" + this.sub.length + " elem)" : this.stream.parseBitString(content, content + len);
+                case 0x04:
+                    return this.sub ? "(" + this.sub.length + " elem)" : this.stream.parseOctetString(content, content + len);
+                case 0x06:
+                    return this.stream.parseOID(content, content + len);
+                case 0x10:
+                case 0x11:
+                    return "(" + this.sub.length + " elem)";
+                case 0x0C:
+                    return this.stream.parseStringUTF(content, content + len);
+                case 0x12:
+                case 0x13:
+                case 0x14:
+                case 0x15:
+                case 0x16:
+                case 0x1A:
+                    return this.stream.parseStringISO(content, content + len);
+                case 0x1E:
+                    return this.stream.parseStringBMP(content, content + len);
+                case 0x17:
+                case 0x18:
+                    return this.stream.parseTime(content, content + len);
             }
             return null;
         };
-        ASN11.prototype.toString = function() {
-            return this.typeName() + "@" + this.stream.pos + "[header:" + this.header + ",length:" + this.length + ",sub:" + ((this.sub === null) ? 'null': this.sub.length) + "]";
+        ASN11.prototype.toString = function () {
+            return this.typeName() + "@" + this.stream.pos + "[header:" + this.header + ",length:" + this.length + ",sub:" + ((this.sub === null) ? 'null' : this.sub.length) + "]";
         };
-        ASN11.prototype.print = function(indent) {
+        ASN11.prototype.print = function (indent) {
             if (indent === undefined) indent = '';
             document.writeln(indent + this);
             if (this.sub !== null) {
                 indent += '  ';
                 for (var i = 0,
-                max = this.sub.length; i < max; ++i) this.sub[i].print(indent);
+                         max = this.sub.length; i < max; ++i) this.sub[i].print(indent);
             }
         };
-        ASN11.prototype.toPrettyString = function(indent) {
+        ASN11.prototype.toPrettyString = function (indent) {
             if (indent === undefined) indent = '';
             var s = indent + this.typeName() + " @" + this.stream.pos;
             if (this.length >= 0) s += "+";
@@ -2706,11 +2875,11 @@ var JSEncryptExports = {}; (function(exports) {
             if (this.sub !== null) {
                 indent += '  ';
                 for (var i = 0,
-                max = this.sub.length; i < max; ++i) s += this.sub[i].toPrettyString(indent);
+                         max = this.sub.length; i < max; ++i) s += this.sub[i].toPrettyString(indent);
             }
             return s;
         };
-        ASN11.prototype.toDOM = function() {
+        ASN11.prototype.toDOM = function () {
             var node = DOM.tag("div", "node");
             node.asn1 = this;
             var head = DOM.tag("div", "head");
@@ -2730,7 +2899,7 @@ var JSEncryptExports = {}; (function(exports) {
             s = "Offset: " + this.stream.pos + "<br/>";
             s += "Length: " + this.header + "+";
             if (this.length >= 0) s += this.length;
-            else s += ( - this.length) + " (undefined)";
+            else s += (-this.length) + " (undefined)";
             if (this.tag & 0x20) s += "<br/>(constructed)";
             else if (((this.tag == 0x03) || (this.tag == 0x04)) && (this.sub !== null)) s += "<br/>(encapsulates)";
             if (content !== null) {
@@ -2749,50 +2918,50 @@ var JSEncryptExports = {}; (function(exports) {
             var sub = DOM.tag("div", "sub");
             if (this.sub !== null) {
                 for (var i = 0,
-                max = this.sub.length; i < max; ++i) sub.appendChild(this.sub[i].toDOM());
+                         max = this.sub.length; i < max; ++i) sub.appendChild(this.sub[i].toDOM());
             }
             node.appendChild(sub);
-            head.onclick = function() {
-                node.className = (node.className == "node collapsed") ? "node": "node collapsed";
+            head.onclick = function () {
+                node.className = (node.className == "node collapsed") ? "node" : "node collapsed";
             };
             return node;
         };
-        ASN11.prototype.posStart = function() {
+        ASN11.prototype.posStart = function () {
             return this.stream.pos;
         };
-        ASN11.prototype.posContent = function() {
+        ASN11.prototype.posContent = function () {
             return this.stream.pos + this.header;
         };
-        ASN11.prototype.posEnd = function() {
+        ASN11.prototype.posEnd = function () {
             return this.stream.pos + this.header + Math.abs(this.length);
         };
-        ASN11.prototype.fakeHover = function(current) {
+        ASN11.prototype.fakeHover = function (current) {
             this.node.className += " hover";
             if (current) this.head.className += " hover";
         };
-        ASN11.prototype.fakeOut = function(current) {
+        ASN11.prototype.fakeOut = function (current) {
             var re = / ?hover/;
             this.node.className = this.node.className.replace(re, "");
             if (current) this.head.className = this.head.className.replace(re, "");
         };
-        ASN11.prototype.toHexDOM_sub = function(node, className, stream, start, end) {
+        ASN11.prototype.toHexDOM_sub = function (node, className, stream, start, end) {
             if (start >= end) return;
             var sub = DOM.tag("span", className);
             sub.appendChild(DOM.text(stream.hexDump(start, end)));
             node.appendChild(sub);
         };
-        ASN11.prototype.toHexDOM = function(root) {
+        ASN11.prototype.toHexDOM = function (root) {
             var node = DOM.tag("span", "hex");
             if (root === undefined) root = node;
             this.head.hexNode = node;
-            this.head.onmouseover = function() {
+            this.head.onmouseover = function () {
                 this.hexNode.className = "hexCurrent";
             };
-            this.head.onmouseout = function() {
+            this.head.onmouseout = function () {
                 this.hexNode.className = "hex";
             };
             node.asn1 = this;
-            node.onmouseover = function() {
+            node.onmouseover = function () {
                 var current = !root.selected;
                 if (current) {
                     root.selected = this.asn1;
@@ -2800,7 +2969,7 @@ var JSEncryptExports = {}; (function(exports) {
                 }
                 this.asn1.fakeHover(current);
             };
-            node.onmouseout = function() {
+            node.onmouseout = function () {
                 var current = (root.selected == this.asn1);
                 this.asn1.fakeOut(current);
                 if (current) {
@@ -2809,32 +2978,32 @@ var JSEncryptExports = {}; (function(exports) {
                 }
             };
             this.toHexDOM_sub(node, "tag", this.stream, this.posStart(), this.posStart() + 1);
-            this.toHexDOM_sub(node, (this.length >= 0) ? "dlen": "ulen", this.stream, this.posStart() + 1, this.posContent());
+            this.toHexDOM_sub(node, (this.length >= 0) ? "dlen" : "ulen", this.stream, this.posStart() + 1, this.posContent());
             if (this.sub === null) node.appendChild(DOM.text(this.stream.hexDump(this.posContent(), this.posEnd())));
             else if (this.sub.length > 0) {
                 var first = this.sub[0];
                 var last = this.sub[this.sub.length - 1];
                 this.toHexDOM_sub(node, "intro", this.stream, this.posContent(), first.posStart());
                 for (var i = 0,
-                max = this.sub.length; i < max; ++i) node.appendChild(this.sub[i].toHexDOM(root));
+                         max = this.sub.length; i < max; ++i) node.appendChild(this.sub[i].toHexDOM(root));
                 this.toHexDOM_sub(node, "outro", this.stream, last.posEnd(), this.posEnd());
             }
             return node;
         };
-        ASN11.prototype.toHexString = function(root) {
+        ASN11.prototype.toHexString = function (root) {
             return this.stream.hexDump(this.posStart(), this.posEnd(), true);
         };
-        ASN11.decodeLength = function(stream) {
+        ASN11.decodeLength = function (stream) {
             var buf = stream.get(),
-            len = buf & 0x7F;
+                len = buf & 0x7F;
             if (len == buf) return len;
             if (len > 3) throw "Length over 24 bits not supported at position " + (stream.pos - 1);
-            if (len === 0) return - 1;
+            if (len === 0) return -1;
             buf = 0;
             for (var i = 0; i < len; ++i) buf = (buf << 8) | stream.get();
             return buf;
         };
-        ASN11.hasContent = function(tag, len, stream) {
+        ASN11.hasContent = function (tag, len, stream) {
             if (tag & 0x20) return true;
             if ((tag < 0x03) || (tag > 0x04)) return false;
             var p = new Stream(stream);
@@ -2844,17 +3013,17 @@ var JSEncryptExports = {}; (function(exports) {
             try {
                 var subLength = ASN11.decodeLength(p);
                 return ((p.pos - stream.pos) + subLength == len);
-            } catch(exception) {
+            } catch (exception) {
                 return false;
             }
         };
-        ASN11.decode = function(stream) {
-            if (! (stream instanceof Stream)) stream = new Stream(stream, 0);
+        ASN11.decode = function (stream) {
+            if (!(stream instanceof Stream)) stream = new Stream(stream, 0);
             var streamStart = new Stream(stream),
-            tag = stream.get(),
-            len = ASN1.decodeLength(stream),
-            header = stream.pos - streamStart.pos,
-            sub = null;
+                tag = stream.get(),
+                len = ASN1.decodeLength(stream),
+                header = stream.pos - streamStart.pos,
+                sub = null;
             if (ASN1.hasContent(tag, len, stream)) {
                 var start = stream.pos;
                 if (tag == 0x03) stream.get();
@@ -2865,49 +3034,49 @@ var JSEncryptExports = {}; (function(exports) {
                     if (stream.pos != end) throw "Content size is not correct for container starting at offset " + start;
                 } else {
                     try {
-                        for (;;) {
+                        for (; ;) {
                             var s = ASN11.decode(stream);
                             if (s.tag === 0) break;
                             sub[sub.length] = s;
                         }
                         len = start - stream.pos;
-                    } catch(e) {
+                    } catch (e) {
                         throw "Exception while decoding undefined length content: " + e;
                     }
                 }
             } else stream.pos += len;
             return new ASN11(streamStart, header, len, tag, sub);
         };
-        ASN11.test = function() {
+        ASN11.test = function () {
             var test = [{
                 value: [0x27],
                 expected: 0x27
             },
-            {
-                value: [0x81, 0xC9],
-                expected: 0xC9
-            },
-            {
-                value: [0x83, 0xFE, 0xDC, 0xBA],
-                expected: 0xFEDCBA
-            }];
+                {
+                    value: [0x81, 0xC9],
+                    expected: 0xC9
+                },
+                {
+                    value: [0x83, 0xFE, 0xDC, 0xBA],
+                    expected: 0xFEDCBA
+                }];
             for (var i = 0,
-            max = test.length; i < max; ++i) {
+                     max = test.length; i < max; ++i) {
                 var pos = 0,
-                stream = new Stream(test[i].value, 0),
-                res = ASN1.decodeLength(stream);
+                    stream = new Stream(test[i].value, 0),
+                    res = ASN1.decodeLength(stream);
                 if (res != test[i].expected) document.write("In test[" + i + "] expected " + test[i].expected + " got " + res + "\n");
             }
         };
         ASN1 = ASN11;
     })();
-    ASN1.prototype.getHexStringValue = function() {
+    ASN1.prototype.getHexStringValue = function () {
         var hexString = this.toHexString();
         var offset = this.header * 2;
         var length = this.length * 2;
         return hexString.substr(offset, length);
     };
-    RSAKey.prototype.parseKey = function(pem) {
+    RSAKey.prototype.parseKey = function (pem) {
         try {
             var modulus = 0;
             var public_exponent = 0;
@@ -2945,11 +3114,11 @@ var JSEncryptExports = {}; (function(exports) {
                 return false;
             }
             return true;
-        } catch(ex) {
+        } catch (ex) {
             return false;
         }
     };
-    RSAKey.prototype.getPrivateBaseKey = function() {
+    RSAKey.prototype.getPrivateBaseKey = function () {
         var options = {
             'array': [new KJUR.asn1.DERInteger({
                 'int': 0
@@ -2974,10 +3143,10 @@ var JSEncryptExports = {}; (function(exports) {
         var seq = new KJUR.asn1.DERSequence(options);
         return seq.getEncodedHex();
     };
-    RSAKey.prototype.getPrivateBaseKeyB64 = function() {
+    RSAKey.prototype.getPrivateBaseKeyB64 = function () {
         return hex2b64(this.getPrivateBaseKey());
     };
-    RSAKey.prototype.getPublicBaseKey = function() {
+    RSAKey.prototype.getPublicBaseKey = function () {
         var options = {
             'array': [new KJUR.asn1.DERObjectIdentifier({
                 'oid': '1.2.840.113549.1.1.1'
@@ -3002,10 +3171,10 @@ var JSEncryptExports = {}; (function(exports) {
         var seq = new KJUR.asn1.DERSequence(options);
         return seq.getEncodedHex();
     };
-    RSAKey.prototype.getPublicBaseKeyB64 = function() {
+    RSAKey.prototype.getPublicBaseKeyB64 = function () {
         return hex2b64(this.getPublicBaseKey());
     };
-    RSAKey.prototype.wordwrap = function(str, width) {
+    RSAKey.prototype.wordwrap = function (str, width) {
         width = width || 64;
         if (!str) {
             return str;
@@ -3013,27 +3182,27 @@ var JSEncryptExports = {}; (function(exports) {
         var regex = '(.{1,' + width + '})( +|$\n?)|(.{1,' + width + '})';
         return str.match(RegExp(regex, 'g')).join('\n');
     };
-    RSAKey.prototype.getPrivateKey = function() {
+    RSAKey.prototype.getPrivateKey = function () {
         var key = "-----BEGIN RSA PRIVATE KEY-----\n";
         key += this.wordwrap(this.getPrivateBaseKeyB64()) + "\n";
         key += "-----END RSA PRIVATE KEY-----";
         return key;
     };
-    RSAKey.prototype.getPublicKey = function() {
+    RSAKey.prototype.getPublicKey = function () {
         var key = "-----BEGIN PUBLIC KEY-----\n";
         key += this.wordwrap(this.getPublicBaseKeyB64()) + "\n";
         key += "-----END PUBLIC KEY-----";
         return key;
     };
-    RSAKey.prototype.hasPublicKeyProperty = function(obj) {
+    RSAKey.prototype.hasPublicKeyProperty = function (obj) {
         obj = obj || {};
         return (obj.hasOwnProperty('n') && obj.hasOwnProperty('e'));
     };
-    RSAKey.prototype.hasPrivateKeyProperty = function(obj) {
+    RSAKey.prototype.hasPrivateKeyProperty = function (obj) {
         obj = obj || {};
         return (obj.hasOwnProperty('n') && obj.hasOwnProperty('e') && obj.hasOwnProperty('d') && obj.hasOwnProperty('p') && obj.hasOwnProperty('q') && obj.hasOwnProperty('dmp1') && obj.hasOwnProperty('dmq1') && obj.hasOwnProperty('coeff'));
     };
-    RSAKey.prototype.parsePropertiesFrom = function(obj) {
+    RSAKey.prototype.parsePropertiesFrom = function (obj) {
         this.n = obj.n;
         this.e = obj.e;
         if (obj.hasOwnProperty('d')) {
@@ -3045,7 +3214,7 @@ var JSEncryptExports = {}; (function(exports) {
             this.coeff = obj.coeff;
         }
     };
-    var JSEncryptRSAKey = function(key) {
+    var JSEncryptRSAKey = function (key) {
         RSAKey.call(this);
         if (key) {
             if (typeof key === 'string') {
@@ -3057,40 +3226,40 @@ var JSEncryptExports = {}; (function(exports) {
     };
     JSEncryptRSAKey.prototype = new RSAKey();
     JSEncryptRSAKey.prototype.constructor = JSEncryptRSAKey;
-    var JSEncrypt = function(options) {
+    var JSEncrypt = function (options) {
         options = options || {};
         this.default_key_size = parseInt(options.default_key_size) || 1024;
         this.default_public_exponent = options.default_public_exponent || '010001';
         this.log = options.log || false;
         this.key = null;
     };
-    JSEncrypt.prototype.setKey = function(key) {
+    JSEncrypt.prototype.setKey = function (key) {
         if (this.log && this.key) {
             console.warn('A key was already set, overriding existing.');
         }
         this.key = new JSEncryptRSAKey(key);
     };
-    JSEncrypt.prototype.setPrivateKey = function(privkey) {
+    JSEncrypt.prototype.setPrivateKey = function (privkey) {
         this.setKey(privkey);
     };
-    JSEncrypt.prototype.setPublicKey = function(pubkey) {
+    JSEncrypt.prototype.setPublicKey = function (pubkey) {
         this.setKey(pubkey);
     };
-    JSEncrypt.prototype.decrypt = function(string) {
+    JSEncrypt.prototype.decrypt = function (string) {
         try {
             return this.getKey().decrypt(b64tohex(string));
-        } catch(ex) {
+        } catch (ex) {
             return false;
         }
     };
-    JSEncrypt.prototype.encrypt = function(string) {
+    JSEncrypt.prototype.encrypt = function (string) {
         try {
             return hex2b64(this.getKey().encrypt(string));
-        } catch(ex) {
+        } catch (ex) {
             return false;
         }
     };
-    JSEncrypt.prototype.getKey = function(cb) {
+    JSEncrypt.prototype.getKey = function (cb) {
         if (!this.key) {
             this.key = new JSEncryptRSAKey();
             if (cb && {}.toString.call(cb) === '[object Function]') {
@@ -3101,16 +3270,16 @@ var JSEncryptExports = {}; (function(exports) {
         }
         return this.key;
     };
-    JSEncrypt.prototype.getPrivateKey = function() {
+    JSEncrypt.prototype.getPrivateKey = function () {
         return this.getKey().getPrivateKey();
     };
-    JSEncrypt.prototype.getPrivateKeyB64 = function() {
+    JSEncrypt.prototype.getPrivateKeyB64 = function () {
         return this.getKey().getPrivateBaseKeyB64();
     };
-    JSEncrypt.prototype.getPublicKey = function() {
+    JSEncrypt.prototype.getPublicKey = function () {
         return this.getKey().getPublicKey();
     };
-    JSEncrypt.prototype.getPublicKeyB64 = function() {
+    JSEncrypt.prototype.getPublicKeyB64 = function () {
         return this.getKey().getPublicBaseKeyB64();
     };
     exports.JSEncrypt = JSEncrypt;
@@ -3118,6 +3287,7 @@ var JSEncryptExports = {}; (function(exports) {
 
 
 var JSEncrypt = JSEncryptExports.JSEncrypt;
+
 function RSAEncrypt(message) {
     var encrypt = new JSEncrypt();
     var pKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDc+CZK9bBA9IU+gZUOc6FUGu7yO9WpTNB0PzmgFBh96Mg1WrovD1oqZ+eIF4LjvxKXGOdI79JRdve9NPhQo07+uqGQgE4imwNnRx7PFtCRryiIEcUoavuNtuRVoBAm6qdB0SrctgaqGfLgKvZHOnwTjyNqjBUxzMeQlEC2czEMSwIDAQAB";

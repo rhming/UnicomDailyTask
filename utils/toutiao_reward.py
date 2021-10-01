@@ -18,8 +18,9 @@ class TouTiao(Common):
             "user-agent": "okhttp/3.9.1",
         })
 
-    def reward(self, options):
-        orderId = md5(str(self.timestamp) + self.mobile)
+    def reward(self, options, retry=2):
+        # 避免出现orderId相同
+        orderId = md5(str(self.timestamp) + self.mobile + uuid4().hex)
         print(orderId)
         media_extra = [
             options.get('ecs_token', ''),
@@ -30,14 +31,15 @@ class TouTiao(Common):
             orderId,
             str(options.get('codeId', '')),
             options.get('channelName', '') or options.get('remark', ''),
-            '4G'
+            'Wifi'  # 4G / Wifi
         ]
         duration = randint(28000, 30000) / 1000
+        uuid_ = self.getDeviceId
         message = {
             "oversea_version_type": 0,
             "reward_name": f"android-{options['remark']}-激励视频",
             "reward_amount": 1,
-            "network": 5,
+            "network": 4,  # 4 / 5 (Wifi / 4G)
             "sdk_version": "3.6.1.4",
             "user_agent": "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36",
             "extra": {
@@ -56,9 +58,9 @@ class TouTiao(Common):
                 "device_id": None,
                 "width": 360,
                 "height": 705,
-                "mac": "00:00:00:00:00:00",
-                "uuid": "",
-                "uuid_md5": "d41d8cd98f00b204e9800998ecf8427e",
+                "mac": self.getMac,
+                "uuid": uuid_,
+                "uuid_md5": md5(uuid_),
                 "os": "android",
                 "client_ip": "",
                 "open_udid": "",
@@ -75,7 +77,7 @@ class TouTiao(Common):
                 "source_type": None,
                 "pack_time": round(self.timestamp / 1000 + random(), 6),
                 "cid": None,
-                "interaction_type": 3,
+                "interaction_type": 4,
                 "src_type": "app",
                 "package_name": "com.sinovatech.unicom.ui",
                 "pos": 5,
@@ -131,6 +133,7 @@ class TouTiao(Common):
             'message': message,
             'cypher': 3
         }
+        self.flushTime(randint(1, 5))
         url = 'https://api-access.pangolin-sdk-toutiao.com/api/ad/union/sdk/reward_video/reward/'
         resp = self.session.post(url=url, json=data)
         resp.encoding = 'utf8'
@@ -140,8 +143,11 @@ class TouTiao(Common):
                 message = cbc_decrypt(data['message'])
                 print(message)
             except:
-                pass
+                message = {}
         print(data)
+        if not message.get('verify', False) and retry > 0:
+            self.flushTime(randint(1, 5))
+            return self.reward(options, retry - 1)
         return orderId
 
 

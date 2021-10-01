@@ -42,7 +42,7 @@ class WoLearn(UnicomClient):
         except Exception as e:
             print(e)
             if retry > 0:
-                time.sleep(5)
+                self.flushTime(5)
                 self.openPlatLineNew(to_url, retry - 1)
             else:
                 raise Exception("[WoLearn]获取登录配置失败, 结束执行任务")
@@ -99,7 +99,7 @@ class WoLearn(UnicomClient):
         except Exception as e:
             print(e)
             if retry > 0:
-                time.sleep(5)
+                self.flushTime(5)
                 self.shoutingTicketLogin(chc, retry - 1)
             else:
                 raise Exception("[WoLearn]登录失败, 结束执行任务")

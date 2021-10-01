@@ -144,8 +144,9 @@ class WzsbzAct(WoLearn):
         if possible_chances == lottery_times:
             print('抽奖次数用完')
             return
+        # if lottery_chance < possible_chances:
         if lottery_times == 0 or lottery_times == lottery_chance:
-            self.flushTime(randint(10, 15))
+            # self.flushTime(randint(10, 15))
             tip = None
             options = {
                 'arguments1': '',

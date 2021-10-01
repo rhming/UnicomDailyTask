@@ -122,8 +122,7 @@ class ThanksGiving(WoRead):
         resp = self.session.post(url=url, data=data)
         result = resp.json()
         try:
-            now_time = time.strftime("%X", time.localtime(self.timestamp))
-            log = f'{now_time}_thanksgiving_{result["prizedesc"]}'
+            log = f'{self.now_time}_thanksgiving_{result["prizedesc"]}'
             self.recordLog(log)
         except:
             print(result)

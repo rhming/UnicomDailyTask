@@ -9,7 +9,7 @@ class Stdthd(WoLearn):
 
     def __init__(self, mobile, password):
         super(Stdthd, self).__init__(mobile, password)
-        self.chc = "VnNaKg45Bn9SNwJ7V2NVaAEwAXgDbg"
+        self.chc = "CC1XJwYxUCkHYgx1V2MGO1NjUitXOg"
         self.config = self.allconfig.get(self.chc, {})
         if self.config.get('accessToken', False):
             self.session.headers.update({
@@ -20,7 +20,7 @@ class Stdthd(WoLearn):
         else:
             self.isLogin = False
         self.prizeList = []
-        self.actId = '4'
+        self.actId = '5'
 
     def getReward(self, item):
         url = 'https://edu.10155.com/wxx-api/Api/Stdthd/getReward'
@@ -195,14 +195,14 @@ class Stdthd(WoLearn):
             else:
                 print(item)
                 self.getReward(item)
-                self.flushTime(3)
+                self.flushTime(1)
 
     def run(self):
         self.userActInfo()
         if not self.isLogin or self.config['timestamp'][:8] != self.now_date.replace('-', ''):
             self.isLogin = True
             self.openPlatLineNew(
-                'https://edu.10155.com/wact/stdt4.html?jrPlatform=SHOUTING&chc=VnNaKg45Bn9SNwJ7V2NVaAEwAXgDbg&vid=-1'
+                'https://edu.10155.com/wact/stdt5.html?jrPlatform=SHOUTING&chc=CC1XJwYxUCkHYgx1V2MGO1NjUitXOg&vid=-1'
             )
             self.shoutingTicketLogin(self.chc)
             self.userActInfo()
@@ -223,7 +223,7 @@ class Stdthd(WoLearn):
             for answerId in range(length):
                 if not self.sal_answer_status:
                     if self.sal_id and self.sal_answer_chances <= self.sal_wrong_num:
-                        self.flushTime(randint(25, 30))
+                        self.flushTime(randint(10, 15))
                         options = {
                             'arguments1': '',
                             'arguments2': '',
@@ -238,8 +238,8 @@ class Stdthd(WoLearn):
                     else:
                         self.userActInfo()
                         continue
-                    if self.sal_id and self.srl_success_days >= 3:
-                        self.flushTime(randint(25, 30))
+                    if self.sal_id and self.srl_success_days >= 2:
+                        self.flushTime(randint(10, 15))
                         options = {
                             'arguments1': '',
                             'arguments2': '',
@@ -251,7 +251,7 @@ class Stdthd(WoLearn):
                         self.addRaffleChance(orderId, self.sal_id)
                     break
         self.userActInfo()
-        if self.srl_success_days >= 3:
+        if self.srl_success_days >= 2:
             self.raffle(self.sal_id)
         self.handlePrize()
 

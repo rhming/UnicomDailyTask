@@ -15,7 +15,11 @@ class PushLog(Common):
         for account in self.accounts:
             account = unquote(account)
             self.mobile = account
-            for record in ['SigninAppRecord', 'WoReadRecord', 'WoLearnRecord', 'WoMailRecord', 'WatchAddFlowRecord']:
+            for record in [
+                'SigninAppRecord', 'SuperSimpleTaskRecord',
+                'WatchAddFlowRecord', 'WoReadRecord',
+                'WoLearnRecord', 'WoMailRecord'
+            ]:
                 if account.isdigit() and record == 'WoMailRecord':
                     continue
                 if not account.isdigit() and record != 'WoMailRecord':
@@ -25,11 +29,12 @@ class PushLog(Common):
                 if not msg:
                     msg = "未获取到日志"
                 if isinstance(msg, dict):
-                    msg = msg.get(self.now_date, '')
+                    msg = msg.get(self.now_date, '未获取到日志')
                     if not isinstance(msg, str):
                         msg = json.dumps(msg, indent=4, ensure_ascii=False)
                 self.message += msg + '\n'
-        getMessage(self.message).run()
+        if self.accounts:
+            getMessage(self.message).run()
 
 
 if __name__ == '__main__':

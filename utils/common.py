@@ -19,8 +19,8 @@ class Common(object):
 
     @property
     def timestamp(self):
-        return int(time.time() * 1000)
-        # return int((time.time() + 8 * 60 * 60) * 1000)
+        # return int(time.time() * 1000)
+        return int((time.time() + 8 * 60 * 60) * 1000)
 
     @property
     def server_timestamp(self):

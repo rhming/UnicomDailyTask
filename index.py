@@ -74,7 +74,7 @@ def main_handler(event=None, context=None):
     """
     now_time = int(time.strftime(
         '%H%M',
-        time.localtime(time.time())  # + 8 * 60 * 60
+        time.localtime(time.time() + 8 * 60 * 60)
     ))
     DEBUG = False
     # 沃阅读活动

@@ -33,11 +33,15 @@
 
 + 华为云函数工作流运行语言python3.6 
 + 上传[UnicomDailyTask_Dependency_Package.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask_Dependency_Package.zip)到创建依赖包
+> ![image](https://user-images.githubusercontent.com/49028484/135639814-21803aff-1bd1-431e-adda-43243643bc00.png)
 + 上传[UnicomDailyTask_Code.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask_Code.zip)到函数工作流  
+> ![image](https://user-images.githubusercontent.com/49028484/135639935-b371a3ba-de47-448c-bc64-2f33e37f689f.png)
 ### 云函数配置
 + 触发配置
 > ![image](https://user-images.githubusercontent.com/49028484/132980589-59cd80dd-be5e-4535-92b0-38b4c35b2ca5.png)
+--- ---
+> ![image](https://user-images.githubusercontent.com/49028484/135640314-395134c8-b32c-4f25-bc2b-3a30d9285dc1.png)
 + 环境配置
 > ![image](https://user-images.githubusercontent.com/49028484/132981224-2b93c0b2-4be7-4745-a440-d58c61f96598.png)
-
-
+--- ---
+> ![image](https://user-images.githubusercontent.com/49028484/135640363-3f42e111-de16-4298-9a7c-e41ad6e60493.png)

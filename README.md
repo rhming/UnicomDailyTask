@@ -36,6 +36,8 @@
 > ![image](https://user-images.githubusercontent.com/49028484/135639814-21803aff-1bd1-431e-adda-43243643bc00.png)
 + 上传[UnicomDailyTask_Code.zip](https://github.com/rhming/UnicomDailyTask/releases/download/1.0/UnicomDailyTask_Code.zip)到函数工作流  
 > ![image](https://user-images.githubusercontent.com/49028484/135639935-b371a3ba-de47-448c-bc64-2f33e37f689f.png)
++ 选择依赖包代码(已经上传创建的依赖包)
+> ![image](https://user-images.githubusercontent.com/49028484/135701797-245b02a9-1cba-45d7-9c0b-56a29af3ad22.png)
 ### 云函数配置
 + 触发配置
 > 腾讯云函数

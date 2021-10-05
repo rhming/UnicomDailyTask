@@ -106,8 +106,8 @@ class SuperSimpleTask(UnicomClient):
                             'arguments1': '',
                             'arguments2': '',
                             'codeId': 946779474,
-                            'remark': '签到超简单任务看视频',
-                            'channelName': '简单任务-看视频得奖励',
+                            'channelName': 'android-签到超简单任务看视频-激励视频',
+                            'remark': '简单任务-看视频得奖励',
                             'ecs_token': self.session.cookies.get('ecs_token')
                         }
                         orderId = self.toutiao.reward(options)

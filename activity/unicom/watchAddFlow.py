@@ -81,8 +81,8 @@ class WatchAddFlow(UnicomClient):
             'arguments1': '',
             'arguments2': '',
             'codeId': 945535710,
+            'channelName': 'android-签到任务看视频领流量-激励视频',
             'remark': '签到任务看视频领流量',
-            'channelName': '',
             'ecs_token': self.session.cookies.get('ecs_token')
         }
         orderId = self.toutiao.reward(options)

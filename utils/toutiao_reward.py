@@ -30,14 +30,14 @@ class TouTiao(Common):
             options.get('arguments2', ''),
             orderId,
             str(options.get('codeId', '')),
-            options.get('channelName', '') or options.get('remark', ''),
+            options['remark'],
             'Wifi'  # 4G / Wifi
         ]
         duration = randint(28000, 30000) / 1000
         uuid_ = self.getDeviceId
         message = {
             "oversea_version_type": 0,
-            "reward_name": f"android-{options['remark']}-激励视频",
+            "reward_name": options['channelName'],
             "reward_amount": 1,
             "network": 4,  # 4 / 5 (Wifi / 4G)
             "sdk_version": "3.6.1.4",
@@ -138,12 +138,13 @@ class TouTiao(Common):
         resp = self.session.post(url=url, json=data)
         resp.encoding = 'utf8'
         data = resp.json()
+        message = {}
         if data.get('message', False):
             try:
                 message = cbc_decrypt(data['message'])
                 print(message)
             except:
-                message = {}
+                pass
         print(data)
         if not message.get('verify', False) and retry > 0:
             self.flushTime(randint(1, 5))

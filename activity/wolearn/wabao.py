@@ -152,6 +152,7 @@ class WzsbzAct(WoLearn):
                 'arguments1': '',
                 'arguments2': '',
                 'codeId': 945994875,
+                'channelName': 'android-教育频道热点活动-激励视频',
                 'remark': '教育频道热点活动',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }

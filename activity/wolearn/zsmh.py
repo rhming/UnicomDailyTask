@@ -144,6 +144,7 @@ class ZSMHAct(WoLearn):
                 'arguments1': '',
                 'arguments2': '',
                 'codeId': 945906033,
+                'channelName': 'android-教育频道知识盲盒活动-激励视频',
                 'remark': '教育频道知识盲盒活动',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }

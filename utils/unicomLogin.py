@@ -5,7 +5,7 @@ import execjs
 import requests
 from random import choices
 from utils.common import Common
-from utils.config import BASE_DIR
+from utils.config import BASE_DIR, deviceId
 from utils.toutiao_sdk import getSign
 
 
@@ -16,7 +16,7 @@ class UnicomClient(Common):
         self.mobile = mobile
         self.password = password
         self.version = "android@8.0805"
-        self.deviceId = "" or self.getDeviceId
+        self.deviceId = deviceId or self.getDeviceId
         self.useragent = "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36; unicom{version:%s,desmobile:%s};devicetype{deviceBrand:Xiaomi,deviceModel:MI 8 SE};{yw_code:}" % (
             self.version,
             self.mobile,
@@ -28,7 +28,7 @@ class UnicomClient(Common):
             "user-agent": "okhttp/4.4.0"
         })
         self.global_config = self.readCookie(self.mobile + "WoGame")
-        if not self.global_config:
+        if not isinstance(self.global_config, dict) or not self.global_config.get('cookie', ''):
             self.login()
         else:
             self.deviceId = self.global_config['cookie']['d_deviceCode']
@@ -138,14 +138,30 @@ class UnicomClient(Common):
         else:
             print(resp.text)
 
-    def taskcallbackquery(self, acId, taskId):
+    def taskcallbackquery(self, acId, taskId, accountChannel=""):
+        """
+            androidCodeId: c,
+            iosCodeId: i,
+            acId: a,
+            taskId: n,
+            remark: r,
+            channel: "GGPD",
+            channelName: o,
+            rewards: !0,
+            unWantedToast: !1,
+            unWantedToast2: !1,
+            accountChannel: "517050707",
+            accountUserName: "5170507071",
+            accountPassword: "123456",
+            accountToken: "638d17ae37a648e9a786bb973d1c4c7b",
+        """
         url = 'https://m.client.10010.com/taskcallback/taskfilter/query'
         data = {
             "arguments1": acId,  # "AC20200728150217",
             "arguments2": "GGPD",
             "arguments3": taskId,  # "96945964804e42299634340cd2650451",
             "arguments4": str(self.timestamp),
-            "arguments6": "",
+            "arguments6": accountChannel,
             "version": self.version,
             "netWay": "4G",
         }
@@ -160,21 +176,26 @@ class UnicomClient(Common):
         # if result['code'] == '9996':
         #     self.onLine()
         #     return
-        if result['code'] == '0000' and not int(result.get('achieve')):
+        if result['code'] == '0000' and not int(result.get('timeflag')) and int(result.get('givePercentage', 0)) != 100:
+            # int(result.get('achieve')) != int(result.get('allocation')):
             return True
         return False
 
-    def taskcallbackdotasks(self, acId, taskId, orderId, remark):
+    def taskcallbackdotasks(
+            self, acId, taskId,
+            orderId, remark, accountChannel="",
+            accountUserName="", accountPassword="", accountToken=""
+    ):
         url = 'https://m.client.10010.com/taskcallback/taskfilter/dotasks'
         data = {
             "arguments1": acId,
             "arguments2": "GGPD",
             "arguments3": taskId,
             "arguments4": str(self.timestamp),
-            "arguments6": "",
-            "arguments7": "",
-            "arguments8": "",
-            "arguments9": "",
+            "arguments6": accountChannel,
+            "arguments7": accountUserName,
+            "arguments8": accountPassword,
+            "arguments9": accountToken,
             "orderId": orderId,
             "netWay": "4G",
             "remark": remark,  # "游戏视频任务积分",
@@ -188,6 +209,9 @@ class UnicomClient(Common):
         resp.encoding = 'utf8'
         result = resp.json()
         print(result)
+
+    def run(self):
+        self.onLine()
 
 
 if __name__ == '__main__':

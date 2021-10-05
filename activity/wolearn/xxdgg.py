@@ -144,6 +144,7 @@ class XxdggAct(WoLearn):
                 'arguments1': '',
                 'arguments2': '',
                 'codeId': 946246464,
+                'channelName': 'android-教育频道刮卡活动-激励视频',
                 'remark': '教育频道刮卡活动',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }

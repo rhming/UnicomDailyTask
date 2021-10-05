@@ -4,6 +4,9 @@ import base64
 # 项目根目录
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/')
 
+# 设备ID(通常是获取手机的imei) 联通判断是否登录多台设备 不能多台设备同时登录 填写常用的设备ID
+deviceId = ''
+
 # 数据存储接口
 data_storage_server_url = ''  # https://utf8.pythonanywhere.com/
 

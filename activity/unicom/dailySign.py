@@ -116,8 +116,8 @@ class SigninApp(UnicomClient):
                 'arguments1': '',
                 'arguments2': '',
                 'codeId': 945535743,
-                'remark': '签到看视频翻倍得积分',
-                'channelName': '签到成功看视频再得奖',
+                'channelName': 'android-签到看视频翻倍得积分-激励视频',
+                'remark': '签到成功看视频再得奖',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }
             orderId = self.toutiao.reward(options)
@@ -130,8 +130,8 @@ class SigninApp(UnicomClient):
                 'arguments1': '',
                 'arguments2': '',
                 'codeId': 945558051,
-                'remark': '签到气泡任务',
-                'channelName': '签到页头气泡看视频得奖励',
+                'channelName': 'android-签到气泡任务-激励视频',
+                'remark': '签到页头气泡看视频得奖励',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }
             orderId = self.toutiao.reward(options)

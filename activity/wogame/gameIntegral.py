@@ -108,6 +108,7 @@ class GameIntegral(WoGame):
                 'arguments1': acId,
                 'arguments2': taskId,
                 'codeId': 945535736,
+                'channelName': 'android-游戏频道看视频得积分-激励视频',
                 'remark': '游戏频道看视频得积分',
                 'ecs_token': self.session.cookies.get('ecs_token')
             }

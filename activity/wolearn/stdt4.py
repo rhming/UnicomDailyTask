@@ -228,6 +228,7 @@ class Stdthd(WoLearn):
                             'arguments1': '',
                             'arguments2': '',
                             'codeId': 945905993,
+                            'channelName': 'android-教育频道答题抽奖活动-激励视频',
                             'remark': '教育频道答题抽奖活动',
                             'ecs_token': self.session.cookies.get('ecs_token')
                         }
@@ -244,6 +245,7 @@ class Stdthd(WoLearn):
                             'arguments1': '',
                             'arguments2': '',
                             'codeId': 945905993,
+                            'channelName': 'android-教育频道答题抽奖活动-激励视频',
                             'remark': '教育频道答题抽奖活动',
                             'ecs_token': self.session.cookies.get('ecs_token')
                         }

@@ -5,6 +5,12 @@ from activity.unicom.dailySign import SigninApp
 from activity.unicom.integralTask import IntegralTask
 from activity.unicom.watchAddFlow import WatchAddFlow
 from activity.unicom.superSimpleTask import SuperSimpleTask
+from activity.unicom.unicomScratchCard import ScratchCard
+from activity.unicom.unicomTurnCard import TurnCard
+from activity.unicom.unicomTurnTable import TurnTable
+from activity.unicom.unicomZhuaWaWa import ZhuaWaWa
+from activity.unicom.sheggMachine import SheggMachine
+from activity.unicom.blindBox import BlindBox
 from activity.woread.luckdraw import LuckDraw
 from activity.woread.openbook import OpenBook
 from activity.woread.readluchdraw import ReadLuchDraw
@@ -118,8 +124,17 @@ def main_handler(event=None, context=None):
         Template(SuperSimpleTask)
 
     # 联通签到页看视频积分任务
-    if now_time in range(800, 830) or DEBUG:
+    if now_time in range(800, 1000) or DEBUG:
         Template(IntegralTask)
+
+    # 联通签到页转盘抽卡任务
+    if now_time in range(900, 1100):
+        Template(SheggMachine)
+        Template(BlindBox)
+        Template(ScratchCard)
+        Template(TurnCard)
+        Template(TurnTable)
+        Template(ZhuaWaWa)
 
     # 消息推送
     if now_time in range(1130, 1140) or now_time in range(1530, 1540) or DEBUG:

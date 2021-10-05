@@ -7,6 +7,7 @@
 + 沃邮箱活动
 + 联通日常任务
 + 联通签到页积分任务
++ 联通积分翻倍任务
 
 ### 部分配置文件说明
 ```
@@ -14,7 +15,7 @@
 `-- utils
     |-- address.json  # 沃阅读自动领取奖品配置(配置收货地址)
     |-- appId.json  # 联通appId配置
-    |-- config.py  # 数据存储服务接口配置 消息推送配置
+    |-- config.py  # 数据存储服务接口配置 消息推送配置 常用设备ID配置(不能同时多台设备登录)
 ```
 + config.py文件
 > `data_storage_server_url` pythonanywhere搭建的接口(替换成自己搭建的域名)

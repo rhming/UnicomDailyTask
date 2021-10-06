@@ -80,7 +80,7 @@ def main_handler(event=None, context=None):
     """
     now_time = int(time.strftime(
         '%H%M',
-        time.localtime(time.time() + 8 * 60 * 60)
+        time.localtime(time.time() + 8 * 60 * 60 + time.timezone)
     ))
     DEBUG = False
     # 沃阅读活动
@@ -123,12 +123,12 @@ def main_handler(event=None, context=None):
     if now_time in range(800, 1600) or DEBUG:
         Template(SuperSimpleTask)
 
-    # 联通签到页看视频积分任务
+    # 联通积分翻倍任务
     if now_time in range(800, 1000) or DEBUG:
         Template(IntegralTask)
 
     # 联通签到页转盘抽卡任务
-    if now_time in range(900, 1100):
+    if now_time in range(900, 1100) or DEBUG:
         Template(SheggMachine)
         Template(BlindBox)
         Template(ScratchCard)

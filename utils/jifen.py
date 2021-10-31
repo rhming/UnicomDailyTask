@@ -67,17 +67,4 @@ def decrypt_req_parmas(ciphertext, jfid):
 
 
 if __name__ == '__main__':
-    ciphertext = 'vVrTBH9LyYJQ/NziU6ekQpioCmfgBboeYjZL18iButoqqLGEBBAsZpWSwcUIXIrtk66O40sEpAdT7RY8uHdPVcoOTDtF9O+mYcnCXt5W49X+4RtjMg=='
-    jfid = 'sc7bwje3f9aa0c9ce2414f3cb503c7daa21d33b3uswadtwu'
-    params = decrypt_req_parmas(ciphertext, jfid)
-    print(params)
-    data = encrypt_req_params(params, jfid)
-    print(data)
-    params = {
-        'params': 'vnlPS76bsYVuMYXa0AM4F8C2ltJShkVxOBQlAAsSD29M3pzyYz+QUqcBKlz9qAwi5do40Boo7BYHf9ulrESoEXo5o4gErEWIYromZnBft8vf1Calz/ROLj93Knlz44T39ed6EF4f7SpO7+cXMEbEIkgzli/q+B9fFY+ys6eHefw=3',
-        'parKey': ['6AJ1cxGTlGirbqfy', 'slnLthFmSxz3eHSL', 'VORCJTc0nDh41R17', 'M99BXj5MMyVsFdLh', 'PseUfSmw4YYhzvNx']
-    }
-    data = decrypt_free_login_params(params)
-    print(data)
-    data = encrypt_free_login_params(data)
-    print(data)
+    pass

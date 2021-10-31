@@ -5,7 +5,7 @@ import execjs
 import requests
 from random import choices
 from utils.common import Common
-from utils.config import BASE_DIR, deviceId
+from utils.config import BASE_DIR, deviceIds
 from utils.toutiao_sdk import getSign
 
 
@@ -16,7 +16,7 @@ class UnicomClient(Common):
         self.mobile = mobile
         self.password = password
         self.version = "android@8.0805"
-        self.deviceId = deviceId or self.getDeviceId
+        self.deviceId = deviceIds.get(self.mobile, '') or self.getDeviceId
         self.useragent = "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36; unicom{version:%s,desmobile:%s};devicetype{deviceBrand:Xiaomi,deviceModel:MI 8 SE};{yw_code:}" % (
             self.version,
             self.mobile,

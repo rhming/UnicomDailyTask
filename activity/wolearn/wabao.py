@@ -6,6 +6,9 @@ from activity.wolearn.wolearn import WoLearn
 
 
 class WzsbzAct(WoLearn):
+    """
+        已结束
+    """
 
     def __init__(self, mobile, password):
         super(WzsbzAct, self).__init__(mobile, password)

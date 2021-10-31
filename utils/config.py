@@ -5,7 +5,10 @@ import base64
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/')
 
 # 设备ID(通常是获取手机的imei) 联通判断是否登录多台设备 不能多台设备同时登录 填写常用的设备ID
-deviceId = ''
+deviceIds = {
+    'mobile-1': 'imei-1',
+    'mobile-2': 'imei-2',
+}
 
 # 数据存储接口
 data_storage_server_url = ''  # https://utf8.pythonanywhere.com/
@@ -23,6 +26,10 @@ push_message_conf = {
     "msg_from": "",  # 发送人qq邮箱
     "password": "",  # 发送人qq邮箱的授权码
     "msg_to": "",  # 收件人邮箱 (发送人和接收人可以相同)
-    # pushplus(微信公众号接收消息推送)
+    # pushplus(微信公众号接收消息推送) http://www.pushplus.plus/
     "token": "",  # pushplus消息推送token,
+    # tg-bot推送 参考文档 https://core.telegram.org/bots/api#sendmessage
+    # 用户id、频道id获取 (需与bot建立会话) 参考文档 https://core.telegram.org/bots/api#getupdates
+    "bot_token": "",  # 机器人token
+    "chat_id": "",  # 用户id、频道id、频道名 (t.me/<频道名>)
 }

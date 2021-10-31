@@ -61,7 +61,7 @@ class SheggMachine(UnicomClient):
         # return
         resp = self.session.post(url=url, json=data)
         data = resp.json()
-        print(json.dumps(data))
+        # print(json.dumps(data))
         token = data['data']['token']  # type: dict
         token.update({"t": self.now_date})
         # token.update({

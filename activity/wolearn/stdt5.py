@@ -190,7 +190,7 @@ class Stdthd(WoLearn):
 
     def handlePrize(self):
         for item in self.prizeList:
-            if int(item['sbl_reward_status']) or int(item['sbl_reward_id']) in [16, 17, 19]:
+            if int(item['sbl_reward_status']) or int(item['sbl_reward_id']) in [16, 17, 18, 19]:
                 continue
             else:
                 print(item)

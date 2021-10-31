@@ -46,7 +46,7 @@ class BlindBox(UnicomClient):
                 self.flushTime(5)
                 self.openPlatLineNew(to_url, retry - 1)
             else:
-                raise Exception("[JFYuech]获取登录配置失败, 结束执行任务")
+                raise Exception("[BlindBox]获取登录配置失败, 结束执行任务")
 
     def freeLoginRock(self):
         url = 'https://m.jf.10010.com/jf-yuech/p/freeLoginRock'
@@ -61,7 +61,7 @@ class BlindBox(UnicomClient):
         # return
         resp = self.session.post(url=url, json=data)
         data = resp.json()
-        print(json.dumps(data))
+        # print(json.dumps(data))
         token = data['data']['token']  # type: dict
         token.update({"t": self.now_date})
         # token.update({

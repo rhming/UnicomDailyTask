@@ -13,6 +13,7 @@ class IntegralTask(UnicomClient):
     def executeIntegralTask(self, acId, taskId, codeId, channelName, remark):
         acId = acId  # "AC20200728150217"
         taskId = taskId  # "96945964804e42299634340cd2650451"
+        print(acId, taskId)
         if self.taskcallbackquery(acId, taskId):
             options = {
                 'arguments1': acId,
@@ -39,13 +40,13 @@ class IntegralTask(UnicomClient):
                 "channelName": "android-签到看视频翻倍得积分-激励视频",
                 "remark": "签到看视频得积分"
             },
-            {
-                'acId': 'AC20200716103629',
-                'taskId': 'a42de1cf969945eb87b529c4763ab6e5',
-                'codeId': "945535637",
-                'channelName': 'new-android-签到小游戏霸王餐积分翻倍-激励视频',
-                'remark': '签到小游戏翻倍得积分'
-            },
+            # {
+            #     'acId': 'AC20200716103629',  # 已过期
+            #     'taskId': 'a42de1cf969945eb87b529c4763ab6e5',
+            #     'codeId': "945535637",
+            #     'channelName': 'new-android-签到小游戏霸王餐积分翻倍-激励视频',
+            #     'remark': '签到小游戏翻倍得积分'
+            # },
             {
                 "acId": "AC20200716103629",
                 "taskId": "fc32b68892de4299b6ccfb2de72e1ab8",
@@ -115,6 +116,13 @@ class IntegralTask(UnicomClient):
                 'codeId': '946179170',
                 'channelName': 'android-签到小游戏套牛积分翻倍-激励视频',
                 'remark': '签到页小游戏翻倍得积分',
+            },
+            {
+                'acId': 'AC20210223113917',
+                'taskId': 'ca584bd6d222458f9195a71af34049e7',
+                'codeId': '945863302',
+                'channelName': 'android-教育频道学知识领积分-激励视频',
+                'remark': '学知识领积分',
             },
         ]
         length = len(items)

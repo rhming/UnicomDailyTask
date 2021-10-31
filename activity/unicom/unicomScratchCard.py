@@ -9,6 +9,9 @@ from utils.msmds import encrypt_mobile
 
 
 class ScratchCard(UnicomClient):
+    """
+        活动过期
+    """
 
     def __init__(self, mobile, password):
         super(ScratchCard, self).__init__(mobile, password)

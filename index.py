@@ -5,12 +5,12 @@ from activity.unicom.dailySign import SigninApp
 from activity.unicom.integralTask import IntegralTask
 from activity.unicom.watchAddFlow import WatchAddFlow
 from activity.unicom.superSimpleTask import SuperSimpleTask
-from activity.unicom.unicomScratchCard import ScratchCard
 from activity.unicom.unicomTurnCard import TurnCard
 from activity.unicom.unicomTurnTable import TurnTable
 from activity.unicom.unicomZhuaWaWa import ZhuaWaWa
 from activity.unicom.sheggMachine import SheggMachine
 from activity.unicom.blindBox import BlindBox
+from activity.unicom.unicomSignerTask import SignerTask
 from activity.woread.luckdraw import LuckDraw
 from activity.woread.openbook import OpenBook
 from activity.woread.readluchdraw import ReadLuchDraw
@@ -18,8 +18,6 @@ from activity.woread.thanksgiving import ThanksGiving
 from activity.woread.prizedetail import Prize
 from activity.wolearn.zsmh import ZSMHAct
 from activity.wolearn.xxdgg import XxdggAct
-from activity.wolearn.wabao import WzsbzAct
-from activity.wolearn.wmms2 import BxwmAct
 from activity.wolearn.stdt5 import Stdthd
 from activity.womail.dailyTask import DailySign
 from activity.womail.scratchable import Scratchable
@@ -98,8 +96,6 @@ def main_handler(event=None, context=None):
     if now_time in range(900, 1100) or DEBUG:
         Template(ZSMHAct)  # 7
         Template(XxdggAct)  # 8
-        Template(WzsbzAct)  # 5
-        Template(BxwmAct)  # 6
     if now_time in range(900, 930) or DEBUG:
         Template(Stdthd)
 
@@ -119,6 +115,10 @@ def main_handler(event=None, context=None):
     if now_time in range(800, 900) or DEBUG:
         Template(WatchAddFlow)
 
+    # 赚积分外卖购物任务
+    if now_time in range(900, 930) or DEBUG:
+        Template(SignerTask)
+
     # 联通签到页积分任务
     if now_time in range(800, 1600) or DEBUG:
         Template(SuperSimpleTask)
@@ -131,7 +131,6 @@ def main_handler(event=None, context=None):
     if now_time in range(900, 1100) or DEBUG:
         Template(SheggMachine)
         Template(BlindBox)
-        Template(ScratchCard)
         Template(TurnCard)
         Template(TurnTable)
         Template(ZhuaWaWa)

@@ -18,6 +18,8 @@ from activity.woread.thanksgiving import ThanksGiving
 from activity.woread.prizedetail import Prize
 from activity.wolearn.zsmh import ZSMHAct
 from activity.wolearn.xxdgg import XxdggAct
+from activity.wolearn.wabao import WzsbzAct
+from activity.wolearn.wmms2 import BxwmAct
 from activity.wolearn.stdt5 import Stdthd
 from activity.womail.dailyTask import DailySign
 from activity.womail.scratchable import Scratchable
@@ -96,6 +98,8 @@ def main_handler(event=None, context=None):
     if now_time in range(900, 1100) or DEBUG:
         Template(ZSMHAct)  # 7
         Template(XxdggAct)  # 8
+        Template(WzsbzAct)  # 6
+        Template(BxwmAct)  # 5
     if now_time in range(900, 930) or DEBUG:
         Template(Stdthd)
 

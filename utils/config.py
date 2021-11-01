@@ -32,4 +32,6 @@ push_message_conf = {
     # 用户id、频道id获取 (需与bot建立会话) 参考文档 https://core.telegram.org/bots/api#getupdates
     "bot_token": "",  # 机器人token
     "chat_id": "",  # 用户id、频道id、频道名 (t.me/<频道名>)
+    # 推荐使用cloudflare免费创建workers程序转发 https://dash.cloudflare.com/ 或 其它反向代理 转发
+    "tg_api": "",  # tg转发api
 }

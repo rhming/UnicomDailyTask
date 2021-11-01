@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 
 class Message:
 
-    def __init__(self, subject, content, msg_from, password, msg_to, token, bot_token, chat_id):
+    def __init__(self, subject, content, msg_from, password, msg_to, token, bot_token, chat_id, tg_api):
         self.content = content
         self.msg_from = msg_from
         self.password = password
@@ -14,6 +14,7 @@ class Message:
         self.token = token
         self.bot_token = bot_token
         self.chat_id = chat_id
+        self.tg_api = tg_api
         self.subject = subject
         self.session = requests.Session()
         self.session.headers = requests.structures.CaseInsensitiveDict({
@@ -91,7 +92,13 @@ class Message:
         try:
             if not self.chat_id.isdigit() and self.chat_id[0] != '@':
                 self.chat_id = "@" + self.chat_id
-            url = f'https://api.telegram.org/bot{self.bot_token}/sendMessage'
+            if not self.tg_api:
+                self.tg_api = "https://api.telegram.org"
+            if self.tg_api.find('://') == -1:
+                self.tg_api = "https://" + self.tg_api
+            if self.tg_api[-1] == '/':
+                self.tg_api = self.tg_api[:-1]
+            url = f'{self.tg_api}/bot{self.bot_token}/sendMessage'
             for block in self.init_content_to_tg():
                 data = {
                     'chat_id': self.chat_id,

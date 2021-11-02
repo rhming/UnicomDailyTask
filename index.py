@@ -11,6 +11,7 @@ from activity.unicom.unicomZhuaWaWa import ZhuaWaWa
 from activity.unicom.sheggMachine import SheggMachine
 from activity.unicom.blindBox import BlindBox
 from activity.unicom.unicomSignerTask import SignerTask
+from activity.unicom.zhuanjifenWeiBo import ZJFWeiBo
 from activity.woread.luckdraw import LuckDraw
 from activity.woread.openbook import OpenBook
 from activity.woread.readluchdraw import ReadLuchDraw
@@ -122,6 +123,7 @@ def main_handler(event=None, context=None):
     # 赚积分外卖购物任务
     if now_time in range(900, 930) or DEBUG:
         Template(SignerTask)
+        Template(ZJFWeiBo)
 
     # 联通签到页积分任务
     if now_time in range(800, 1600) or DEBUG:

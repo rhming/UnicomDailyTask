@@ -218,6 +218,8 @@ class ZJFWeiBo(UnicomClient):
         with open(BASE_DIR + '/utils/wbsign.json', 'r') as fp:
             wbsign = json.loads(fp.read())
         item['wbsign'] = wbsign.get(item['uid'], '')
+        if not item['wbsign']:
+            return
         if signCode:
             self.cardList(signCode, deviceId, androidId, item)
 

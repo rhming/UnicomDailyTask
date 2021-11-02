@@ -90,7 +90,7 @@ class Message:
 
     def tgbot(self):
         try:
-            if not self.chat_id.isdigit() and self.chat_id[0] != '@':
+            if not (self.chat_id.isdigit() or self.chat_id[0] == '-' and self.chat_id[1:].isdigit()):
                 self.chat_id = "@" + self.chat_id
             if not self.tg_api:
                 self.tg_api = "https://api.telegram.org"

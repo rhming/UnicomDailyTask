@@ -42,6 +42,7 @@ class SuperSimpleTask(UnicomClient):
         resp = self.session.post(url=url, data=data)
         data = resp.json()
         print(json.dumps(data))
+        return data['status']
 
     def accomplishDotaskOptions(self):
         url = 'https://act.10010.com/SigninApp/simplyDotask/accomplishDotask'
@@ -92,7 +93,7 @@ class SuperSimpleTask(UnicomClient):
             if item['title'] in [
                 '去浏览积分商城', '兑换1次话费红包', '玩4次0元夺宝',
                 '玩3次转盘赢好礼', '玩3次套牛赢好礼', '玩3次扔球赢好礼',
-                '玩3次刮刮乐', '玩3次开心抓大奖', '看2次完整视频得积分',
+                '玩3次刮刮乐', '玩3次开心抓大奖', '看2次完整视频',
                 '完成下载参与斗地主游戏', '完成下载参与捕鱼游戏'
             ] and int(item['achieve']) != int(item['allocation']) and item['btn'] not in ['倒计时']:
                 print(item['title'])
@@ -101,7 +102,7 @@ class SuperSimpleTask(UnicomClient):
                     orderId = ''
                     self.accomplishDotaskOptions()
                     self.flushTime(1)
-                    if item['title'] == '看2次完整视频得积分':
+                    if item['title'] == '看2次完整视频':
                         self.flushTime(randint(15, 20))
                         options = {
                             'arguments1': '',
@@ -119,9 +120,12 @@ class SuperSimpleTask(UnicomClient):
                 # break
             if int(item['achieve']) == int(item['allocation']) and item['btn'] not in ['已完成', '倒计时']:
                 # int(item['showStyle']) != 3:
-                self.doTask(item)
+                status = self.doTask(item)
                 self.receiveBenefits()
-                self.flushTime(randint(10, 15))
+                self.flushTime(randint(15, 20))
+                if status != '0000':
+                    self.getTask('superEasy')
+                    self.doTask(item)
                 break
         for item in self.getTask('bigRew'):
             if int(item['achieve']) == int(item['allocation']) and item['btn'] != '已完成':  # int(item['showStyle']) != 3:

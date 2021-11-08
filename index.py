@@ -12,6 +12,7 @@ from activity.unicom.sheggMachine import SheggMachine
 from activity.unicom.blindBox import BlindBox
 from activity.unicom.unicomSignerTask import SignerTask
 from activity.unicom.zhuanjifenWeiBo import ZJFWeiBo
+from activity.unicom.qiandao11 import QianDao11
 from activity.woread.luckdraw import LuckDraw
 from activity.woread.openbook import OpenBook
 from activity.woread.readluchdraw import ReadLuchDraw
@@ -111,7 +112,7 @@ def main_handler(event=None, context=None):
         WXTemplate(Scratchable)
 
     # ----------------------------------------------------------------
-    # 使用华为云函数工作流 (腾讯云函数、阿里函数计算 获取积分ip黑名单)
+    # 使用华为云函数工作流 (腾讯云函数、阿里函数计算 ip在获取积分接口被限制)
     # 联通每日签到
     if now_time in range(800, 830) or now_time in range(1130, 1200) or now_time in range(1530, 1600) or DEBUG:
         Template(SigninApp)
@@ -124,6 +125,7 @@ def main_handler(event=None, context=None):
     if now_time in range(900, 930) or DEBUG:
         Template(SignerTask)
         Template(ZJFWeiBo)
+        Template(QianDao11)
 
     # 联通签到页积分任务
     if now_time in range(800, 1600) or DEBUG:

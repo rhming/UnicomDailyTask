@@ -45,7 +45,7 @@ push_message_conf = {
     # channel 方糖服务号=9、Android=98、Bark iOS=8、企业微信群机器人=1、钉钉群机器人=2、飞书群机器人=3、测试号=0、自定义=88、企业微信应用消息=66
     "ftqq": {
         "sendkey": "",  # server酱 SendKey
-        "channel": "",  # 指定消息通道 选填
-        "openid": "",  # 消息抄送的openid 选填
+        "channel": "",  # 指定消息通道 选填 最多可选两个 以`|`分割 例如: 1|2
+        "openid": "",  # 消息抄送的openid 选填 企业微信群中成员账号名
     }
 }

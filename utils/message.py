@@ -6,20 +6,21 @@ from email.mime.text import MIMEText
 
 class Message:
 
-    def __init__(self, subject, content, msg_from, password, msg_to, token, bot_token, chat_id, tg_api):
-        self.content = content
-        self.msg_from = msg_from
-        self.password = password
-        self.msg_to = msg_to
-        self.token = token
-        self.bot_token = bot_token
-        self.chat_id = chat_id
-        self.tg_api = tg_api
+    def __init__(self, subject, content, qq, pushplus, tg, ftqq):
         self.subject = subject
+        self.content = content
+        self.init_setattr(qq)
+        self.init_setattr(pushplus)
+        self.init_setattr(tg)
+        self.init_setattr(ftqq)
         self.session = requests.Session()
         self.session.headers = requests.structures.CaseInsensitiveDict({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'
         })
+
+    def init_setattr(self, kw: dict):
+        for k in kw:
+            self.__setattr__(k, kw[k])
 
     def init_content_to_html(self):
         template = ''
@@ -90,7 +91,10 @@ class Message:
 
     def tgbot(self):
         try:
-            if not (self.chat_id.isdigit() or self.chat_id[0] == '-' and self.chat_id[1:].isdigit()):
+            if (
+                    not (self.chat_id.isdigit() or self.chat_id[0] == '-' and self.chat_id[1:].isdigit())
+                    and self.chat_id[0] != '@'
+            ):
                 self.chat_id = "@" + self.chat_id
             if not self.tg_api:
                 self.tg_api = "https://api.telegram.org"
@@ -110,6 +114,20 @@ class Message:
         except Exception as e:
             print(e)
 
+    def ftqq(self):
+        try:
+            url = f'https://sctapi.ftqq.com/{self.sendkey}.send'
+            data = {
+                'title': self.subject,
+                'desp': self.content.replace('\n', '\n\n'),
+                'channel': self.channel,
+                'openid': self.openid
+            }
+            resp = self.session.post(url=url, data=data)
+            print(resp.json())
+        except Exception as e:
+            print(e)
+
     def run(self):
         if self.token:
             self.pushplus()
@@ -117,6 +135,8 @@ class Message:
             self.qqemail()
         if self.bot_token and self.chat_id:
             self.tgbot()
+        if self.sendkey:
+            self.ftqq()
 
 
 def getMessage(content):

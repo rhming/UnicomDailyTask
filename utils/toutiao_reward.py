@@ -40,7 +40,7 @@ class TouTiao(Common):
             "reward_name": options['channelName'],
             "reward_amount": 1,
             "network": 4,  # 4 / 5 (Wifi / 4G)
-            "sdk_version": "3.6.1.4",
+            "sdk_version": "4.0.1.9",
             "user_agent": "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36",
             "extra": {
                 "ad_slot_type": 7,
@@ -54,7 +54,7 @@ class TouTiao(Common):
                 "ad_type": None,
                 "pricing": None,
                 "ut": 12,
-                "version_code": "8.8.5",
+                "version_code": "8.9.2",
                 "device_id": None,
                 "width": 360,
                 "height": 705,

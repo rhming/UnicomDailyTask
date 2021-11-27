@@ -4,6 +4,7 @@ from threading import Thread
 from activity.unicom.dailySign import SigninApp
 from activity.unicom.integralTask import IntegralTask
 from activity.unicom.watchAddFlow import WatchAddFlow
+from activity.unicom.watchAddFee import WatchAddFee
 from activity.unicom.superSimpleTask import SuperSimpleTask
 from activity.unicom.unicomTurnCard import TurnCard
 from activity.unicom.unicomTurnTable import TurnTable
@@ -24,8 +25,10 @@ from activity.wolearn.wabao import WzsbzAct
 from activity.wolearn.wmms2 import BxwmAct
 from activity.wolearn.stdt5 import Stdthd
 from activity.womail.dailyTask import DailySign
-from activity.womail.scratchable import Scratchable
-from activity.womail.puzzle2 import Puzzle2
+# from activity.womail.scratchable import Scratchable
+# from activity.womail.puzzle2 import Puzzle2
+from activity.womusic.womusic import WoMusic
+from activity.womusic.dayDayDraw import DayDayDraw
 from activity.push.pushlog import PushLog
 
 
@@ -108,14 +111,15 @@ def main_handler(event=None, context=None):
     # 沃邮箱活动
     if now_time in range(1000, 1010) or now_time in range(1300, 1310) or DEBUG:
         WXTemplate(DailySign)
-        WXTemplate(Puzzle2)
-        WXTemplate(Scratchable)
+        # WXTemplate(Puzzle2)
+        # WXTemplate(Scratchable)
 
     # ----------------------------------------------------------------
     # 使用华为云函数工作流 (腾讯云函数、阿里函数计算 ip在获取积分接口被限制)
     # 联通每日签到
     if now_time in range(800, 830) or now_time in range(1130, 1200) or now_time in range(1530, 1600) or DEBUG:
         Template(SigninApp)
+        Template(WatchAddFee)
 
     # 联通签到页看视频领流量
     if now_time in range(800, 900) or DEBUG:
@@ -126,6 +130,8 @@ def main_handler(event=None, context=None):
         Template(SignerTask)
         Template(ZJFWeiBo)
         Template(QianDao11)
+        Template(WoMusic)
+        Template(DayDayDraw)
 
     # 联通签到页积分任务
     if now_time in range(800, 1600) or DEBUG:

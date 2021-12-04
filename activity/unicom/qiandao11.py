@@ -19,6 +19,7 @@ class QianDao11(UnicomClient):
         })
         self.clientVersion = self.version.split('@')[1]
         self.activityId = 'Ac-jgg2'
+        self.qiandaoId = 'Ac-leijiqiandao3'
 
     def openPlatLineNew(self, to_url, retry=3):
         try:
@@ -52,6 +53,7 @@ class QianDao11(UnicomClient):
         self.session.headers.update({
             "authorization": f"Bearer {token['access_token']}"
         })
+        self.qiandaoId = data['data'].get('activit_id', '') or self.qiandaoId
         task = [item for item in data['data']['task']['qiandao'] if item['isDangtian'] == 'true'] or [{}]
         tiaozhan = data['data']['task'].get('tiaozhan', {})
         """
@@ -61,7 +63,7 @@ class QianDao11(UnicomClient):
         return task[0], tiaozhan
 
     def getActivity(self):
-        url = 'https://m.jf.10010.com/jf-yuech/api/gameResultV2/getActivitys?activityIds=Ac-jgg2'
+        url = f'https://m.jf.10010.com/jf-yuech/api/gameResultV2/getActivitys?activityIds={self.activityId}'
         resp = self.session.get(url=url)
         data = resp.json()
         try:
@@ -72,7 +74,7 @@ class QianDao11(UnicomClient):
     def startQianDao(self):
         url = 'https://m.jf.10010.com/jf-yuech/p/qiandao11/api/startQiandao'
         data = {
-            "activityId": "Ac-leijiqiandao2"
+            "activityId": self.qiandaoId
         }
         resp = self.session.post(url=url, json=data)
         data = resp.json()
@@ -81,7 +83,7 @@ class QianDao11(UnicomClient):
     def startTiaoZhan(self):
         url = 'https://m.jf.10010.com/jf-yuech/p/qiandao11/api/startTiaoZhan'
         data = {
-            "activityId": "Ac-leijiqiandao2",
+            "activityId": self.qiandaoId,
             "dayTime": 14
         }
         resp = self.session.post(url=url, json=data)
@@ -122,7 +124,7 @@ class QianDao11(UnicomClient):
             self.startTiaoZhan()
         if self.getActivity():
             params = {
-                'activityId': 'Ac-jgg2',
+                'activityId': self.activityId,
                 'currentTimes': 1,
                 'type': '免费'
             }

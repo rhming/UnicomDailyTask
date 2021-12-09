@@ -25,6 +25,7 @@ from activity.wolearn.wabao import WzsbzAct
 from activity.wolearn.wmms2 import BxwmAct
 from activity.wolearn.stdt5 import Stdthd
 from activity.womail.dailyTask import DailySign
+from activity.womail.webmail import WoMailWeb
 # from activity.womail.scratchable import Scratchable
 # from activity.womail.puzzle2 import Puzzle2
 from activity.womusic.womusic import WoMusic
@@ -38,6 +39,21 @@ def Template(cls):
     for mobile, password in [
         # ('手机号', '服务密码'),
         # ('手机号', '服务密码'),
+    ]:
+        ts.append(Thread(target=cls(mobile, password).run))
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+
+
+def WebMailTemplate(cls):
+    # 网页版沃邮箱签到活动
+    # https://mail.wo.cn 网页版沃邮箱账号密码 只需填写手机号 不需加后缀@wo.cn
+    ts = []
+    for mobile, password in [
+        # ('手机号', '密码'),
+        # ('手机号', '密码'),
     ]:
         ts.append(Thread(target=cls(mobile, password).run))
     for t in ts:
@@ -111,6 +127,7 @@ def main_handler(event=None, context=None):
     # 沃邮箱活动
     if now_time in range(1000, 1010) or now_time in range(1300, 1310) or DEBUG:
         WXTemplate(DailySign)
+        WebMailTemplate(WoMailWeb)
         # WXTemplate(Puzzle2)
         # WXTemplate(Scratchable)
 

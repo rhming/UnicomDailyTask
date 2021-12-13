@@ -72,6 +72,7 @@ class WoMailWeb(Common):
         resp = self.session.get(url=url)
         data = resp.json()
         print(data)
+        return data['data']
 
     def queryIntegralTask(self):
         url = 'https://club.mail.wo.cn/clubwebservice/growth/queryIntegralTask?channelId=club'
@@ -79,6 +80,36 @@ class WoMailWeb(Common):
         data = resp.json()
         print(data)
         return data['data']
+
+    def addIntegral(self, resourceFlag):
+        url = 'https://club.mail.wo.cn/clubwebservice/growth/addIntegral'
+        data = {'resourceType': resourceFlag}
+        resp = self.session.get(url=url, params=data)
+        print(resp.json())
+
+    def addGrowthViaTask(self, resourceFlag):
+        url = 'https://club.mail.wo.cn/clubwebservice/growth/addGrowthViaTask'
+        data = {'resourceType': resourceFlag}
+        resp = self.session.get(url=url, params=data)
+        print(resp.json())
+
+    def updateUserInfo(self):
+        url = 'https://club.mail.wo.cn/clubwebservice/club-user/user-info/updateUserInfo'
+        data = {
+            "nickName": "--",
+            "headPortrait": "/clubwebservice/static/user-login-false_03.jpg",
+            "phoneNum": self.mobile,
+            "sex": "男",
+            "birthday": "--",
+            "education": "",
+            "vocation": "",
+            "telephone": "",
+            "zipCode": ""
+        }
+        resp = self.session.post(url=url, json=data, headers={
+            'Content-Type': 'application/json;charset=UTF-8'
+        })
+        print(resp.json())
 
     def run(self):
         cookies = self.readCookie(f'{self.mobile}WoMailWeb')
@@ -97,14 +128,21 @@ class WoMailWeb(Common):
         else:
             print('已签到')
 
-        # for task in self.queryIntegralTask():
-        #     if task['resourceName'] in ['沃邮箱网页版登录']:
-        #         if task['taskState'] == 0:
-        #             # sid, key = self.getPasswordKey()
-        #             # config = self.userLogin(sid, key)
-        #             # sid = config['sid']
-        #             print()
-        # print()
+        for task in self.queryIntegralTask():
+            if task['resourceName'] in ['沃邮箱网页版登录'] and task['taskState'] == 0:
+                from activity.womail.mailxt5 import XT5CoreMail
+                XT5CoreMail(self.mobile, self.password).run()
+            else:
+                if task['taskState'] == 0:
+                    self.addIntegral(task['resourceFlag'])
+                    print()
+        for task in self.queryGrowthTask():
+            if task['resourceName'] == '俱乐部修改个人资料' and task['taskState'] == 0:
+                self.updateUserInfo()
+            else:
+                if task['taskState'] == 0:
+                    self.addGrowthViaTask(task['resourceFlag'])
+        print()
 
 
 if __name__ == '__main__':

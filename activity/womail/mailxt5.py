@@ -84,7 +84,8 @@ class XT5CoreMail(Common):
             'action:login': ''
         }
         resp = self.session.post(url=url, data=data)
-        print(resp.text)
+        # print(resp.text)
+        return re.findall('[\s\S]+sid = "(.+)"', resp.text)[0]
 
     def cmcuLogin(self, sid, key):
         timestamp = self.timestamp
@@ -159,35 +160,17 @@ class XT5CoreMail(Common):
                 'nonce': '',
             }
 
-    # def getSocketSid(self, sid):
-    #     url = 'https://mail.wo.cn/socket.io/?EIO=3&transport=polling&t='
-    #     resp = self.session.get(url=url, headers={
-    #         'Origin': 'https://mail.wo.cn',
-    #         'Referer': 'https://mail.wo.cn/coremail/hxphone/',
-    #         'X-CM-SERVICE': 'PHONE'
-    #     })
-    #     print(resp.content)
-    #
-    # def _(self, sid, ssid):
-    #     url = f'https://mail.wo.cn/socket.io/?EIO=3&transport=polling&t=&sid={ssid}'
-    #     resp = self.session.post(
-    #         url=url,
-    #         data='138:42["auth",{"clientId":"webmail:%s","sid":"%s","username":"%s@wo.cn"}]' % (
-    #             sid,
-    #             sid,
-    #             self.mobile
-    #         ),
-    #         headers={
-    #             'Content-Type': 'text/plain;charset=UTF-8',
-    #             'Origin': 'https://mail.wo.cn',
-    #             'Referer': 'https://mail.wo.cn/coremail/hxphone/',
-    #             'X-CM-SERVICE': 'PHONE'
-    #         }
-    #     )
-    #     print(resp.content)
+    def addClubInfo(self, sid):
+        url = f'https://mail.wo.cn/coremail/s/json?func=club:addClubInfo&sid={sid}'
+        data = {"userAction": "login"}
+        resp = self.session.post(url=url, json=data, headers={
+            'Content-Type': 'text/x-json'
+        })
+        print(resp.json())
 
     def run(self):
-        self.login()
+        sid = self.login()
+        self.addClubInfo(sid)
 
 
 if __name__ == '__main__':

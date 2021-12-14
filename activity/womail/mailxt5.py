@@ -4,6 +4,7 @@ import requests
 from utils.common import Common
 from utils.bol import rsa_encrypt_password
 from lxml import etree
+from random import randint
 
 
 class XT5CoreMail(Common):
@@ -160,9 +161,9 @@ class XT5CoreMail(Common):
                 'nonce': '',
             }
 
-    def addClubInfo(self, sid):
+    def addClubInfo(self, sid, userAction):
         url = f'https://mail.wo.cn/coremail/s/json?func=club:addClubInfo&sid={sid}'
-        data = {"userAction": "login"}
+        data = {"userAction": userAction}
         resp = self.session.post(url=url, json=data, headers={
             'Content-Type': 'text/x-json'
         })
@@ -170,7 +171,15 @@ class XT5CoreMail(Common):
 
     def run(self):
         sid = self.login()
-        self.addClubInfo(sid)
+        self.addClubInfo(sid, 'login')
+        self.flushTime(randint(1, 3))
+        self.addClubInfo(sid, 'baiduCloud')
+        self.flushTime(randint(1, 3))
+        self.addClubInfo(sid, 'listMail')
+        self.flushTime(randint(1, 3))
+        self.addClubInfo(sid, 'uploadFile')
+        self.flushTime(randint(1, 3))
+        self.addClubInfo(sid, 'sendMail')
 
 
 if __name__ == '__main__':

@@ -91,6 +91,53 @@ class DayDayDraw(WoMusic):
         resp = self.session.post(url=url, data=data)
         print(resp.json())
 
+    def getActList(self):
+        url = 'https://m.10155.com/ringplat/unicom/topic/getActList'
+        resp = self.session.get(url=url)
+        data = resp.json()
+        return data.get('data', [])
+
+    def topicInfo(self, topicId):
+        url = f'https://m.10155.com/ringplat/unicom/topic/topicInfo?topicId={topicId}'
+        resp = self.session.get(url=url)
+        data = resp.json()
+        data = data.get('data', {})
+        optionsRatio = json.loads(data.get('optionsRatio', '{"1":0}'))
+        choice = max(optionsRatio, key=lambda k: optionsRatio[k])
+        return data.get('actId', ''), choice
+
+    def vote(self, topicId, actId, choice):
+        url = 'https://m.10155.com/ringplat/unicom/topic/vote'
+        data = {
+            'topicId': topicId,
+            'actId': actId,
+            'choice': choice,
+            'phone': self.mobile,
+        }
+        resp = self.session.post(url=url, data=data)
+        data = resp.json()
+        print(data)
+
+    def getUserStatus(self):
+        url = 'https://m.10155.com/ringplat/unicom/topic/getUserStatus'
+        data = {
+            'phone': self.mobile
+        }
+        resp = self.session.post(url=url, data=data)
+        data = resp.json()
+        return data.get('data', {}).get('1', [])
+
+    def userInfo(self, actId, topicId):
+        url = 'https://m.10155.com/ringplat/unicom/topic/userInfo'
+        data = {
+            'phone': self.mobile,
+            'actId': actId,
+            'topicId': topicId,
+        }
+        resp = self.session.post(url=url, data=data)
+        data = resp.json()
+        return data.get('data', 1)
+
     def run(self):
         to_url = 'https://m.10155.com/h5/crbt-huodong/daydaydraw.html#/index?chl=3000007200'
         self.openPlatLineNew(to_url)
@@ -109,6 +156,13 @@ class DayDayDraw(WoMusic):
         for _ in range(self.lotteryRemainTimes()):
             self.lottery()
             self.flushTime(3)
+        for task in self.getActList():
+            if task['actStatus']:
+                actId, choice = self.topicInfo(task['topicId'])
+                if not self.userInfo(actId, task['topicId']):
+                    self.vote(task['topicId'], actId, choice)
+                self.flushTime(2)
+        pass
 
 
 if __name__ == '__main__':

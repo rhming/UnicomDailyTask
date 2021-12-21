@@ -122,6 +122,18 @@ class WoMusic(UnicomClient):
         print(data)
         # return data
 
+    def doTask2(self, type_, rewardKey, id_):
+        url = 'https://m.10155.com/woapp/integralTask/doTask'
+        data = {
+            'taskType': encrypt_params(type_),
+            'playDuration': encrypt_params(rewardKey),  # taskDuration
+            'configKey': encrypt_params(id_),  # taskId
+        }
+        resp = self.session.post(url=url, data=data)
+        data = resp.json()
+        print(data)
+        # return data
+
     def likeOper(self, contentId):
         url = 'https://m.10155.com/woapp/my/likeoper'
         data = {
@@ -144,6 +156,11 @@ class WoMusic(UnicomClient):
             self.session.headers.update({
                 "accessToken": womusic['accessToken']
             })
+        info = self.getUserIntegralTaskInfo(5)
+        if info.get('finishStatus') != 1 and info.get('topLimitStatus') != 1:
+            for task in info.get('taskConfigList', []):
+                self.doTask2('5', task['rewardKey'], task['id'])
+                self.flushTime(randint(3, 5))
         info = self.getUserIntegralTaskInfo(1)
         if info.get('finishStatus') != 1 and info.get('integral') != info.get('monthTopLimit'):
             self.doTask()

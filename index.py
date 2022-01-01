@@ -30,6 +30,7 @@ from activity.womail.webmail import WoMailWeb
 # from activity.womail.puzzle2 import Puzzle2
 from activity.womusic.womusic import WoMusic
 from activity.womusic.dayDayDraw import DayDayDraw
+from activity.woshipin.woshipin import WoShiPin
 from activity.push.pushlog import PushLog
 
 
@@ -149,6 +150,7 @@ def main_handler(event=None, context=None):
         Template(QianDao11)
         Template(WoMusic)
         Template(DayDayDraw)
+        Template(WoShiPin)
 
     # 联通签到页积分任务
     if now_time in range(800, 1600) or DEBUG:

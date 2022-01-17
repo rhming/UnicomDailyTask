@@ -13,21 +13,16 @@ from activity.unicom.sheggMachine import SheggMachine
 from activity.unicom.blindBox import BlindBox
 from activity.unicom.unicomSignerTask import SignerTask
 from activity.unicom.zhuanjifenWeiBo import ZJFWeiBo
-from activity.unicom.qiandao11 import QianDao11
 from activity.woread.luckdraw import LuckDraw
 from activity.woread.openbook import OpenBook
 from activity.woread.readluchdraw import ReadLuchDraw
 from activity.woread.thanksgiving import ThanksGiving
 from activity.woread.prizedetail import Prize
-from activity.wolearn.zsmh import ZSMHAct
-from activity.wolearn.xxdgg import XxdggAct
 from activity.wolearn.wabao import WzsbzAct
-from activity.wolearn.wmms2 import BxwmAct
-from activity.wolearn.stdt5 import Stdthd
+from activity.wolearn.kldgg import KldggAct
+from activity.wolearn.yymh import YYMHAct
 from activity.womail.dailyTask import DailySign
 from activity.womail.webmail import WoMailWeb
-# from activity.womail.scratchable import Scratchable
-# from activity.womail.puzzle2 import Puzzle2
 from activity.womusic.womusic import WoMusic
 from activity.womusic.dayDayDraw import DayDayDraw
 from activity.woshipin.woshipin import WoShiPin
@@ -118,24 +113,21 @@ def main_handler(event=None, context=None):
 
     # 沃学习活动
     if now_time in range(900, 1100) or DEBUG:
-        Template(ZSMHAct)  # 7
-        Template(XxdggAct)  # 8
-        Template(WzsbzAct)  # 6
-        Template(BxwmAct)  # 5
-    if now_time in range(900, 930) or DEBUG:
-        Template(Stdthd)
+        Template(KldggAct)
+        Template(YYMHAct)
+        Template(WzsbzAct)
 
     # 沃邮箱活动
     if now_time in range(1000, 1010) or now_time in range(1300, 1310) or DEBUG:
-        WXTemplate(DailySign)
-        WebMailTemplate(WoMailWeb)
-        # WXTemplate(Puzzle2)
-        # WXTemplate(Scratchable)
+        # WXTemplate(DailySign)
+        # WebMailTemplate(WoMailWeb)
+        # 维护升级中
+        pass
 
     # ----------------------------------------------------------------
     # 使用华为云函数工作流 (腾讯云函数、阿里函数计算 ip在获取积分接口被限制)
     # 联通每日签到
-    if now_time in range(800, 830) or now_time in range(1130, 1200) or now_time in range(1530, 1600) or DEBUG:
+    if now_time in range(800, 900) or now_time in range(1100, 1200) or now_time in range(1500, 1600) or DEBUG:
         Template(SigninApp)
         Template(WatchAddFee)
 
@@ -147,7 +139,6 @@ def main_handler(event=None, context=None):
     if now_time in range(900, 930) or DEBUG:
         Template(SignerTask)
         Template(ZJFWeiBo)
-        Template(QianDao11)
         Template(WoMusic)
         Template(DayDayDraw)
         Template(WoShiPin)

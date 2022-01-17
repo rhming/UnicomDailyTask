@@ -33,13 +33,13 @@ class IntegralTask(UnicomClient):
     def run(self):
         self.onLine()
         items = [
-            {
-                "acId": "AC20200624091508",
-                "taskId": "734225b6ec9946cca3bcdc6a6e14fc1f",
-                "codeId": "945535704",
-                "channelName": "android-签到看视频翻倍得积分-激励视频",
-                "remark": "签到看视频得积分"
-            },
+            # {
+            #     "acId": "AC20200624091508",
+            #     "taskId": "734225b6ec9946cca3bcdc6a6e14fc1f",
+            #     "codeId": "945535704",
+            #     "channelName": "android-签到看视频翻倍得积分-激励视频",
+            #     "remark": "签到看视频得积分"
+            # },
             # {
             #     'acId': 'AC20200716103629',  # 已过期
             #     'taskId': 'a42de1cf969945eb87b529c4763ab6e5',
@@ -47,13 +47,13 @@ class IntegralTask(UnicomClient):
             #     'channelName': 'new-android-签到小游戏霸王餐积分翻倍-激励视频',
             #     'remark': '签到小游戏翻倍得积分'
             # },
-            {
-                "acId": "AC20200716103629",
-                "taskId": "fc32b68892de4299b6ccfb2de72e1ab8",
-                "codeId": "946169925",
-                "channelName": "android-签到小游戏幸运转盘-激励视频",
-                "remark": "签到小游戏翻倍得积分",
-            },
+            # {
+            #     "acId": "AC20200716103629",
+            #     "taskId": "fc32b68892de4299b6ccfb2de72e1ab8",
+            #     "codeId": "946169925",
+            #     "channelName": "android-签到小游戏幸运转盘-激励视频",
+            #     "remark": "签到小游戏翻倍得积分",
+            # },
             {
                 'acId': 'AC20200611152252',
                 'taskId': '10131519d6e14f1b97b13cb627d956e5',
@@ -75,20 +75,20 @@ class IntegralTask(UnicomClient):
                 'channelName': 'android-签到小游戏开心抓大奖-激励视频',
                 'remark': '签到页小游戏抓娃娃积分翻倍',
             },
-            {
-                'acId': 'AC20200716103629',
-                'taskId': 'cc71671332524a09ab0f444f4562c752',
-                'codeId': '945597731',
-                'channelName': 'android-签到小游戏买什么都省幸运刮刮乐积分翻倍-激励视频',
-                'remark': '签到小游戏翻倍得积分',
-            },
-            {
-                'acId': 'AC20200716103629',
-                'taskId': '79b0275d6a5742ce96af76a663cde0ab',
-                'codeId': '945597731',
-                'channelName': 'android-签到小游戏买什么都省幸运刮刮乐积分翻倍-激励视频',
-                'remark': '签到小游戏翻倍得积分',
-            },
+            # {
+            #     'acId': 'AC20200716103629',
+            #     'taskId': 'cc71671332524a09ab0f444f4562c752',
+            #     'codeId': '945597731',
+            #     'channelName': 'android-签到小游戏买什么都省幸运刮刮乐积分翻倍-激励视频',
+            #     'remark': '签到小游戏翻倍得积分',
+            # },
+            # {
+            #     'acId': 'AC20200716103629',
+            #     'taskId': '79b0275d6a5742ce96af76a663cde0ab',
+            #     'codeId': '945597731',
+            #     'channelName': 'android-签到小游戏买什么都省幸运刮刮乐积分翻倍-激励视频',
+            #     'remark': '签到小游戏翻倍得积分',
+            # },
             {
                 'acId': 'AC20200716103629',
                 'taskId': '810d279fa7ec478289315e61e8e4322f',
@@ -103,13 +103,13 @@ class IntegralTask(UnicomClient):
                 'channelName': 'android-签到积分翻倍-激励视频',
                 'remark': '签到页小游戏翻倍得积分',
             },
-            {
-                'acId': 'AC20200716103629',
-                'taskId': 'ba6b14db2ff4438297449fa827ff449e',
-                'codeId': '945793197',
-                'channelName': 'android-签到积分翻倍-激励视频',
-                'remark': '签到页小游戏翻倍得积分',
-            },
+            # {
+            #     'acId': 'AC20200716103629',
+            #     'taskId': 'ba6b14db2ff4438297449fa827ff449e',
+            #     'codeId': '945793197',
+            #     'channelName': 'android-签到积分翻倍-激励视频',
+            #     'remark': '签到页小游戏翻倍得积分',
+            # },
             {
                 'acId': 'AC20200716103629',
                 'taskId': '7c6b859434c2403fb34607c349994828',
@@ -117,13 +117,76 @@ class IntegralTask(UnicomClient):
                 'channelName': 'android-签到小游戏套牛积分翻倍-激励视频',
                 'remark': '签到页小游戏翻倍得积分',
             },
+            # {
+            #     'acId': 'AC20210223113917',
+            #     'taskId': 'ca584bd6d222458f9195a71af34049e7',
+            #     'codeId': '945863302',
+            #     'channelName': 'android-教育频道学知识领积分-激励视频',
+            #     'remark': '学知识领积分',
+            # },
             {
-                'acId': 'AC20210223113917',
-                'taskId': 'ca584bd6d222458f9195a71af34049e7',
-                'codeId': '945863302',
-                'channelName': 'android-教育频道学知识领积分-激励视频',
-                'remark': '学知识领积分',
+                'acId': 'AC20200611152252',
+                'taskId': '16c35dc0c1ce4a45ac97b4a8848ee120',
+                'codeId': '945705532',
+                'channelName': 'android-签到游戏跃程赚积分拼果果-激励视频',
+                'remark': '签到小游戏看视频',
             },
+            # {
+            #     'acId': 'AC20210716155809',
+            #     'taskId': 'b9549a68b1a34a168f24983032a5bcee',
+            #     'codeId': '945935333',
+            #     'channelName': 'android-联合嘉信积分翻倍测试-激励视频',
+            #     'remark': '阅读计时器看视频得积分',
+            # },
+            {
+                'acId': 'AC20210824113055',
+                'taskId': 'dd2455d8f45b4eacb1b65a8056a4525f',
+                'codeId': '945994413',
+                'channelName': 'android-阅读计时器看视频得积分-激励视频',
+                'remark': '手厅头条广告活动',
+            },
+            {
+                'acId': 'AC20210824113055',
+                'taskId': '27a5cfecefd04601bb20689ed654f428',
+                'codeId': '945994413',
+                'channelName': 'android-阅读计时器看视频得积分-激励视频',
+                'remark': '手厅头条广告活动',
+            },
+            {
+                'acId': 'AC20200611152252',
+                'taskId': '359e2362537a4491b2083a67f0658157',
+                'codeId': '946956806',
+                'channelName': 'android-签到小游戏看视频-激励视频',
+                'remark': '签到小游戏看视频',
+            },
+            {
+                'acId': 'AC20200611152252',
+                'taskId': '9493fd731d934f8bbf5ba93a3c367d6b',
+                'codeId': '946956806',
+                'channelName': 'android-签到小游戏看视频-激励视频',
+                'remark': '签到小游戏看视频',
+            },
+            {
+                'acId': 'AC20210716155809',
+                'taskId': 'b9549a68b1a34a168f24983032a5bcee',
+                'codeId': '945935333',
+                'channelName': 'android-阅读计时器看视频得积分-激励视频',
+                'remark': '签到页猜图大玩家积分翻倍',
+            },
+            {
+                'acId': 'AC20210716155809',
+                'taskId': 'f3a30efbde8c4331a9f8ab12c7b4904a',
+                'codeId': '945935333',
+                'channelName': 'android-阅读计时器看视频得积分-激励视频',
+                'remark': '签到页猜图大玩家积分翻倍',
+            },
+            # {
+            #     'acId': 'AC20210521154619',
+            #     'taskId': 'c11e289a586b45d48f73b06b285a131a',
+            #     'codeId': '945909749',
+            #     'channelName': 'android-签到页挖矿奖励积分翻倍-激励视频',
+            #     'remark': '签到页挖矿奖励积分翻倍',
+            # },
         ]
         length = len(items)
         for _, item in enumerate(items, 1):

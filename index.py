@@ -17,6 +17,8 @@ from activity.woread.luckdraw import LuckDraw
 from activity.woread.openbook import OpenBook
 from activity.woread.readluchdraw import ReadLuchDraw
 from activity.woread.thanksgiving import ThanksGiving
+from activity.woread.readbook import ReadBook
+from activity.woread.woread_2022 import NGWoRead
 from activity.woread.prizedetail import Prize
 from activity.wolearn.wabao import WzsbzAct
 from activity.wolearn.kldgg import KldggAct
@@ -108,6 +110,10 @@ def main_handler(event=None, context=None):
         Template(ThanksGiving)
     if now_time in range(800, 830) or DEBUG:  # 1次
         Template(ReadLuchDraw)
+    if now_time in range(600, 830) or DEBUG:
+        Template(ReadBook)
+    if now_time in range(830, 900) or DEBUG:
+        Template(NGWoRead)
     if now_time in range(830, 900) or DEBUG:  # 自动领取奖品
         Template(Prize)
 
@@ -119,8 +125,8 @@ def main_handler(event=None, context=None):
 
     # 沃邮箱活动
     if now_time in range(1000, 1010) or now_time in range(1300, 1310) or DEBUG:
-        # WXTemplate(DailySign)
-        # WebMailTemplate(WoMailWeb)
+        WXTemplate(DailySign)
+        WebMailTemplate(WoMailWeb)
         # 维护升级中
         pass
 
@@ -138,7 +144,6 @@ def main_handler(event=None, context=None):
     # 赚积分外卖购物任务
     if now_time in range(900, 930) or DEBUG:
         Template(SignerTask)
-        Template(ZJFWeiBo)
         Template(WoMusic)
         Template(DayDayDraw)
         Template(WoShiPin)
@@ -156,7 +161,6 @@ def main_handler(event=None, context=None):
         Template(SheggMachine)
         Template(BlindBox)
         Template(TurnCard)
-        Template(TurnTable)
         Template(ZhuaWaWa)
 
     # 消息推送

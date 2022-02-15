@@ -7,6 +7,10 @@ import time
 
 
 class WoMailWeb(Common):
+    """
+    club.mail.wo.cn
+    club.soyu.cn
+    """
 
     def __init__(self, mobile, password):
         super(WoMailWeb, self).__init__()
@@ -14,7 +18,7 @@ class WoMailWeb(Common):
         self.password = password
         self.session = requests.Session()
         self.session.headers = requests.structures.CaseInsensitiveDict({
-            "Referer": "https://club.mail.wo.cn/clubwebservice/club-user/user-info/sign-scope",
+            "Referer": "https://club.soyu.cn/clubwebservice/club-user/user-info/sign-scope",
             "User-Agent": "Mozilla/5.0 (Linux; Android 8.1.0; MI 8 SE Build/OPM1.171019.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36"
         })
 
@@ -24,7 +28,7 @@ class WoMailWeb(Common):
             'username': self.mobile,
             'password': encrypt_password(self.password),
             'clientId': 'userclub',
-            'redirectUrl': 'https://club.mail.wo.cn/clubwebservice/club-user/user-info/sign-scope',
+            'redirectUrl': 'https://club.soyu.cn/clubwebservice/club-user/user-info/sign-scope',
             'appType': '2',
             'state': ''
         }
@@ -47,12 +51,12 @@ class WoMailWeb(Common):
             raise Exception('[WoMailWeb]登录失败 结束执行任务')
 
     def userSign(self):
-        url = 'https://club.mail.wo.cn/clubwebservice/club-user/user-sign/create?channelId='
+        url = 'https://club.soyu.cn/clubwebservice/club-user/user-sign/create?channelId='
         resp = self.session.get(url=url)
         print(resp.json())
 
     def signRecord(self):
-        url = 'https://club.mail.wo.cn/clubwebservice/club-user/user-sign/query-continuous-sign-record'
+        url = 'https://club.soyu.cn/clubwebservice/club-user/user-sign/query-continuous-sign-record'
         resp = self.session.get(url=url)
         data = resp.json()
         print(json.dumps(data))
@@ -63,38 +67,38 @@ class WoMailWeb(Common):
             return 0, 0
 
     def monthSignInfo(self):
-        url = 'https://club.mail.wo.cn/clubwebservice/club-user/user-sign/month-sign-info'
+        url = 'https://club.soyu.cn/clubwebservice/club-user/user-sign/month-sign-info'
         resp = self.session.get(url=url)
         data = resp.json()
 
     def queryGrowthTask(self):
-        url = 'https://club.mail.wo.cn/clubwebservice/growth/queryGrowthTask'
+        url = 'https://club.soyu.cn/clubwebservice/growth/queryGrowthTask'
         resp = self.session.get(url=url)
         data = resp.json()
         print(data)
         return data['data']
 
     def queryIntegralTask(self):
-        url = 'https://club.mail.wo.cn/clubwebservice/growth/queryIntegralTask?channelId=club'
+        url = 'https://club.soyu.cn/clubwebservice/growth/queryIntegralTask?channelId=club'
         resp = self.session.get(url=url)
         data = resp.json()
         print(data)
         return data['data']
 
     def addIntegral(self, resourceFlag):
-        url = 'https://club.mail.wo.cn/clubwebservice/growth/addIntegral'
-        data = {'resourceType': resourceFlag}
+        url = 'https://club.soyu.cn/clubwebservice/growth/addIntegral'
+        data = {'resourceType': resourceFlag, 'jumpToAdd': 'true'}
         resp = self.session.get(url=url, params=data)
         print(resp.json())
 
     def addGrowthViaTask(self, resourceFlag):
-        url = 'https://club.mail.wo.cn/clubwebservice/growth/addGrowthViaTask'
-        data = {'resourceType': resourceFlag}
+        url = 'https://club.soyu.cn/clubwebservice/growth/addGrowthViaTask'
+        data = {'resourceType': resourceFlag, 'jumpToAdd': 'true'}
         resp = self.session.get(url=url, params=data)
         print(resp.json())
 
     def updateUserInfo(self):
-        url = 'https://club.mail.wo.cn/clubwebservice/club-user/user-info/updateUserInfo'
+        url = 'https://club.soyu.cn/clubwebservice/club-user/user-info/updateUserInfo'
         data = {
             "nickName": "--",
             "headPortrait": "/clubwebservice/static/user-login-false_03.jpg",

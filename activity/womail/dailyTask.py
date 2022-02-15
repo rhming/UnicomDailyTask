@@ -76,6 +76,8 @@ class DailySign(WoMail):
         return result
 
     def run(self):
+        if int(self.now_date.replace('-', '')) > 20220228:
+            return
         try:
             self.login()
             self.index()

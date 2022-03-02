@@ -83,7 +83,7 @@ class ReadBook(WoRead):
                 return item
 
     def run(self):
-        if int(self.now_date.replace('-', '')) > 20220228:
+        if int(self.now_date.replace('-', '')) > 20220331:
             return
         try:
             cntindex = self.getIntellectRecommend()

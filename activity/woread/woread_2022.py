@@ -107,7 +107,7 @@ class NGWoRead(WoRead):
         data = data.get('data', {})
         data.update({'activerule': ''})
         print(data)
-        return data.get('activeindex', '181')
+        return data.get('activeindex', '221')
 
     def queryUserScore(self):
         url = 'https://10010.woread.com.cn/ng_woread_service/rest/activity/yearEnd/queryUserScore'
@@ -284,7 +284,7 @@ class NGWoRead(WoRead):
         return data.get('total', 0)
 
     def run(self):
-        if int(self.now_date.replace('-', '')) > 20220228:
+        if int(self.now_date.replace('-', '')) > 20220331:
             return
         self.config = self.readCookie(f'{self.mobile}NGWoRead') or {}
         if not isinstance(self.config, dict) or self.config.get('t', '') != self.now_date \

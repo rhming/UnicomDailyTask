@@ -78,8 +78,8 @@ class WoMailWeb(Common):
         print(data)
         return data['data']
 
-    def queryIntegralTask(self):
-        url = 'https://club.soyu.cn/clubwebservice/growth/queryIntegralTask?channelId=club'
+    def queryIntegralTask(self, channelId):
+        url = f'https://club.soyu.cn/clubwebservice/growth/queryIntegralTask?channelId={channelId}'
         resp = self.session.get(url=url)
         data = resp.json()
         print(data)
@@ -132,14 +132,22 @@ class WoMailWeb(Common):
         else:
             print('已签到')
 
-        for task in self.queryIntegralTask():
-            if task['resourceName'] in ['沃邮箱网页版登录'] and task['taskState'] == 0:
-                from activity.womail.mailxt5 import XT5CoreMail
-                XT5CoreMail(self.mobile, self.password).run()
-            else:
-                if task['taskState'] == 0:
-                    self.addIntegral(task['resourceFlag'])
-                    print()
+        for task in self.queryIntegralTask('club'):
+            # if False and task['resourceName'] in ['沃邮箱网页版登录'] and task['taskState'] == 0:
+            #     from activity.womail.mailxt5 import XT5CoreMail
+            #     XT5CoreMail(self.mobile, self.password).run()
+            # else:
+            if task['taskState'] == 0:
+                self.addIntegral(task['resourceFlag'])
+                print()
+        for task in self.queryIntegralTask('wo-wx'):
+            # if False and task['resourceName'] in ['沃邮箱网页版登录'] and task['taskState'] == 0:
+            #     from activity.womail.mailxt5 import XT5CoreMail
+            #     XT5CoreMail(self.mobile, self.password).run()
+            # else:
+            if task['taskState'] == 0:
+                self.addIntegral(task['resourceFlag'])
+                print()
         for task in self.queryGrowthTask():
             if task['resourceName'] == '俱乐部修改个人资料' and task['taskState'] == 0:
                 self.updateUserInfo()

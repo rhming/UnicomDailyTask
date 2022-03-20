@@ -42,7 +42,7 @@ class DailyWomail(UnicomClient):
         url = resp.headers['Location']
         url = parse.unquote(url)
         # 'https://womail.richpush.cn/cn/lottery/wap/index.html?mobile=khVmIRIT8EA6JncSqolrSg==&redirectUrl=https://mail.wo.cn/coremail/cmcu_addon/sso_redirect.jsp?sid=HAIVeoSSLYYgqXICdExfoeXzHdYDxDkh&url=https://mail.wo.cn/coremail/hxphone/sso.html#/frame/folder/1?sid=HAIVeoSSLYYgqXICdExfoeXzHdYDxDkh'
-        p = '^(?P<url>[^?]+)\?mobile=(?P<mobile>.+)&redirectUrl=(?P<redirectUrl>.+)&url=(?P<url1>.+)$'
+        p = '^(?P<url1>[^?]+)\?mobile=(?P<mobile>.+)&redirectUrl=(?P<redirectUrl>.+)&url=(?P<url2>.+)$'
         m = re.match(p, url)
         if not m:
             return info
